@@ -1,5 +1,5 @@
 package me.igwb.GoldenChest;
-import me.igwb.GoldeChest.Database.DatabaseConnector;
+import me.igwb.GoldenChest.Database.DatabaseConnector;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
