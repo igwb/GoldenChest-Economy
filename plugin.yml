@@ -1,0 +1,14 @@
+name: GoldenChest-Economy
+main: me.igwb.GoldenChest.Plugin
+version: 0.1
+commands:
+   money:
+      description: Check how much money someone has.
+      usage: /money [player]
+      permission: GoldenChest.money
+      permission-message: You don't have permission to use that command!
+   top:
+      description: Shows an ordered list of bank accounts.
+      usage: /top
+      permission: GoldenChest.top
+      permission-message: You don't have permission to use that command!
