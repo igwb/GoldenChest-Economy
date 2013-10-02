@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.bukkit.Location;
+
 import me.igwb.GoldenChest.Plugin;
 
 public class DatabaseConnector {
@@ -41,7 +43,8 @@ public class DatabaseConnector {
 
 
             stat.executeUpdate("PRAGMA foreign_keys = ON;");
-            stat.executeUpdate("CREATE TABLE IF NOT EXISTS Players (Id INTEGER PRIMARY KEY, Name TEXT NOT NULL UNIQUE, X INTEGER, Y INTEGER, Z INTEGER, OverflowAmount FLOAT);");
+            stat.executeUpdate("CREATE TABLE IF NOT EXISTS Players (Id INTEGER PRIMARY KEY, Name TEXT NOT NULL UNIQUE, Chests BLOB, OverflowAmount FLOAT);");
+            stat.executeUpdate("CREATE TABLE IF NOT EXISTS Chestss (Id INTEGER PRIMARY KEY, Owner TEXT NOT NULL, World STRING, X INTEGER, Y INTEGER, Z INTEGER);");
 
         } catch (SQLException e) {
             //TODO Auto-generated catch block
@@ -63,4 +66,17 @@ public class DatabaseConnector {
             }
         }
     }
+
+    public void addPlayer(String name) {
+
+    }
+
+    public void addChest(String owner, Location chestLocaiton) {
+
+    }
+
+    public void removeChest(String owner, Location chestLocation) {
+
+    }
+
 }

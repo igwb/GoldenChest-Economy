@@ -6,8 +6,11 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.inventory.ItemStack;
 
-public class ChestChecker {
+public final class ChestChecker {
 
+    private ChestChecker() {
+
+    }
 
     public static GoldAmount getChestBalance(final Chest checkThis) {
 
