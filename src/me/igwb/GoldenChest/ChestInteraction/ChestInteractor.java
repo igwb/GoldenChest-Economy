@@ -4,6 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.ItemStack;
 
+import me.igwb.GoldenChest.GoldAmount;
+import me.igwb.GoldenChest.GoldConverter;
 import me.igwb.GoldenChest.GoldTransactionResult;
 import me.igwb.GoldenChest.GoldTransactionResultType;
 
@@ -12,24 +14,20 @@ public class ChestInteractor {
 
     public GoldTransactionResult depositGold(final Float amount, final Chest targetChest) {
 
-        Integer blocks = 0, ingots = 0;
-        Float amountToProcess = amount;
+        GoldAmount goldToDeposit;
+        Integer blocks = 0, ingots = 0, nuggets = 0;
 
-        //Give as many gold blocks as possible.
-        if (amountToProcess / 9 >= 1) {
-            blocks = (int) Math.floor(amount / 9);
-            amountToProcess -= blocks * 9;
-        }
+        GoldConverter gc = new GoldConverter((float) 1.0);
+        goldToDeposit = gc.convertMoneyToGold(amount);
 
-        //Give as many gold ingots as possible.
-        if (amountToProcess / 1 >= 1) {
-            ingots = (int) Math.floor(amountToProcess / 1);
-            amountToProcess -= ingots * 1;
-        }
+
+        blocks = goldToDeposit.getBlocks();
+        ingots = goldToDeposit.getIngots();
+        nuggets = goldToDeposit.getNuggets();
 
         ItemStack[] contents = targetChest.getInventory().getContents();
 
-        //Try to deposit the items on existing stacks.
+        //Try to deposit the items on existing stacks
         for (ItemStack itemStack : contents) {
             if (itemStack != null) {
                 switch (itemStack.getType()) {
@@ -45,7 +43,7 @@ public class ChestInteractor {
                     }
                     break;
                 case GOLD_INGOT:
-                    if (blocks >= 1) {
+                    if (ingots >= 1) {
                         if (itemStack.getMaxStackSize() - itemStack.getAmount() >= ingots) {
                             itemStack.setAmount(itemStack.getAmount() + ingots);
                             ingots = 0;
@@ -55,6 +53,16 @@ public class ChestInteractor {
                         }
                     }
                     break;
+                case GOLD_NUGGET:
+                    if (nuggets >= 1) {
+                        if (itemStack.getMaxStackSize() - itemStack.getAmount() >= nuggets) {
+                            itemStack.setAmount(itemStack.getAmount() + nuggets);
+                            nuggets = 0;
+                        } else {
+                            nuggets -= itemStack.getMaxStackSize() - itemStack.getAmount();
+                            itemStack.setAmount(itemStack.getMaxStackSize());
+                        }
+                    }
                 default:
                     break;
                 }
@@ -62,10 +70,10 @@ public class ChestInteractor {
         }
 
         //Create new item stacks if not all items are deposited already.
-        if (blocks > 0 | ingots > 0) {
+        if (blocks > 0 | ingots > 0 | nuggets > 0) {
             for (ItemStack itemStack : contents) {
                 if (itemStack == null) {
-                    if (blocks > 0) {
+                    if (blocks >= 1) {
                         itemStack = new ItemStack(Material.GOLD_BLOCK);
                         if (blocks < itemStack.getMaxStackSize()) {
                             itemStack.setAmount(blocks);
@@ -74,7 +82,7 @@ public class ChestInteractor {
                             itemStack.setAmount(itemStack.getMaxStackSize());
                             blocks -= itemStack.getMaxStackSize();
                         }
-                    } else if (ingots > 0) {
+                    } else if (ingots >= 1) {
                         itemStack = new ItemStack(Material.GOLD_INGOT);
                         if (ingots < itemStack.getMaxStackSize()) {
                             itemStack.setAmount(ingots);
@@ -83,6 +91,15 @@ public class ChestInteractor {
                             itemStack.setAmount(itemStack.getMaxStackSize());
                             ingots -= itemStack.getMaxStackSize();
                         }
+                    } else if (nuggets >= 1) {
+                        itemStack = new ItemStack(Material.GOLD_NUGGET);
+                        if (nuggets < itemStack.getMaxStackSize()) {
+                            itemStack.setAmount(nuggets);
+                            nuggets = 0;
+                        } else {
+                            itemStack.setAmount(itemStack.getMaxStackSize());
+                            nuggets -= itemStack.getMaxStackSize();
+                        }
                     } else {
                         break;
                     }
@@ -90,15 +107,14 @@ public class ChestInteractor {
             }
         }
 
-        if (blocks == 0 && ingots == 0) {
-            return new GoldTransactionResult(GoldTransactionResultType.SUCCESSFUL, amountToProcess);
+        if (blocks == 0 && ingots == 0 && nuggets == 0) {
+            return new GoldTransactionResult(GoldTransactionResultType.SUCCESSFUL, goldToDeposit.getoverflowMoney());
         } else {
-            amountToProcess += (blocks * 9) + ingots;
-           if (amountToProcess == amount) {
-               return new GoldTransactionResult(GoldTransactionResultType.FAILED, amount);
-           } else {
-               return new GoldTransactionResult(GoldTransactionResultType.SUCCESSFUL, amountToProcess);
-           }
+            if (goldToDeposit.getBlocks() == blocks && goldToDeposit.getIngots() == ingots && goldToDeposit.getNuggets() == nuggets) {
+                return new GoldTransactionResult(GoldTransactionResultType.FAILED, amount);
+            } else {
+                return new GoldTransactionResult(GoldTransactionResultType.SUCCESSFUL, gc.convertGoldToMoney(new GoldAmount(blocks, ingots, nuggets, goldToDeposit.getoverflowMoney())));
+            }
         }
     }
 
