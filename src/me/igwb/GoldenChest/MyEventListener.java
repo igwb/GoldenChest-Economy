@@ -8,33 +8,33 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
-public class MyEventListener implements Listener{
+public class MyEventListener implements Listener {
 
-    Plugin parent;
-    
-    public MyEventListener(Plugin parent) {
-        
-        this.parent = parent;
+    private Plugin parentPlugin;
+
+    public MyEventListener(final Plugin parent) {
+
+        parentPlugin = parent;
     }
-    
+
     @EventHandler
-    public void onInventoryOpenEvent(InventoryOpenEvent e){
-        
+    public void onInventoryOpenEvent(final InventoryOpenEvent e) {
+
         GoldAmount am = null;
-        
-        if(e.getInventory().getHolder() instanceof Chest) {
-            
-            am = ChestChecker.getChestBalance((Chest)e.getInventory().getHolder());
-            
-        } else if(e.getInventory().getHolder() instanceof DoubleChest) {
-            
-            am = ChestChecker.getChestBalance((DoubleChest)e.getInventory().getHolder());
+
+        if (e.getInventory().getHolder() instanceof Chest) {
+
+            am = ChestChecker.getChestBalance((Chest) e.getInventory().getHolder());
+
+        } else if (e.getInventory().getHolder() instanceof DoubleChest) {
+
+            am = ChestChecker.getChestBalance((DoubleChest) e.getInventory().getHolder());
         }
-        
-        if(am == null) {
+
+        if (am == null) {
             return;
         }
-        parent.logMessage(am.getBlocks() + " Blocks; " + am.getIngots() + " Ingots; " + am.getNuggets() + " Nuggets");
+        parentPlugin.logMessage(am.getBlocks() + " Blocks; " + am.getIngots() + " Ingots; " + am.getNuggets() + " Nuggets");
     }
-    
+
 }

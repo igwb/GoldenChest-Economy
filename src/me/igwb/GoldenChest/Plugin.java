@@ -2,27 +2,27 @@ package me.igwb.GoldenChest;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
-public class Plugin extends JavaPlugin{
+public class Plugin extends JavaPlugin {
 
-    
-    MyEventListener EL;
-    
+
+    private MyEventListener eventListener;
+
     @Override
     public void onEnable() {
-        
-        EL = new MyEventListener(this);
+
+        eventListener = new MyEventListener(this);
         registerEvents();
-        
+
     }
-    
+
     private void registerEvents() {
-        
-        getServer().getPluginManager().registerEvents(EL, this);
+
+        getServer().getPluginManager().registerEvents(eventListener, this);
     }
-    
-    public void logMessage(String message) {
-        
-      getLogger().info(message);
+
+    public void logMessage(final String message) {
+
+        getLogger().info(message);
     }
-    
+
 }

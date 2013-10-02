@@ -8,16 +8,16 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChestChecker {
 
-    
-    public static GoldAmount getChestBalance(Chest checkThis) {
-        
-        ItemStack contents[] = checkThis.getInventory().getContents();
+
+    public static GoldAmount getChestBalance(final Chest checkThis) {
+
+        ItemStack[] contents = checkThis.getInventory().getContents();
 
         int blocks = 0, ingots = 0, nuggets = 0;
 
         for (ItemStack is : contents) {
 
-            if(is != null) {
+            if (is != null) {
                 switch (is.getType()) {
                 case GOLD_BLOCK:
 
@@ -39,16 +39,16 @@ public class ChestChecker {
 
         return new GoldAmount(blocks, ingots, nuggets);
     }
-    
-    public static GoldAmount getChestBalance(DoubleChest checkThis) {
-        
-        ItemStack contents[] = checkThis.getInventory().getContents();
+
+    public static GoldAmount getChestBalance(final DoubleChest checkThis) {
+
+        ItemStack[] contents = checkThis.getInventory().getContents();
 
         int blocks = 0, ingots = 0, nuggets = 0;
 
         for (ItemStack is : contents) {
 
-            if(is != null) {
+            if (is != null) {
                 switch (is.getType()) {
                 case GOLD_BLOCK:
 
@@ -70,5 +70,5 @@ public class ChestChecker {
 
         return new GoldAmount(blocks, ingots, nuggets);
     }
-    
+
 }
