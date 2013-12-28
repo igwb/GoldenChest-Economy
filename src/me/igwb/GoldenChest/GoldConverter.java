@@ -1,9 +1,5 @@
 package me.igwb.GoldenChest;
 
-import me.igwb.GoldenChest.ChestInteraction.ChestChecker;
-
-import org.bukkit.block.Chest;
-
 public class GoldConverter {
 
     private final float exchangeRate;
@@ -18,14 +14,14 @@ public class GoldConverter {
     }
 
     public float convertGoldToMoney(GoldAmount toConvert) {
-        
+
         float value = 0;
 
         value += toConvert.getNuggets() * exchangeRate;
         value += toConvert.getIngots() * 9 * exchangeRate;
         value += toConvert.getBlocks() * 9 * 9 * exchangeRate;
         value += toConvert.getoverflowMoney();
-        
+
         return value;
     }
 

@@ -1,7 +1,5 @@
 package me.igwb.GoldenChest.Database;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -105,7 +103,7 @@ public class DatabaseConnector {
                 return DBAddResult.exists;
             } else {
 
-                st.execute("INSERT INTO Players(Name) Values(" + "\'" + name + "\'" + ");");
+                st.execute("INSERT INTO Players(Name, OverflowAmount) Values(" + "\'" + name + "\'," + "\'0\'" + ");");
                 return DBAddResult.success;
             }
 
@@ -143,8 +141,7 @@ public class DatabaseConnector {
 
             //Check if the player is in the database
             if (rs.next()) {
-
-                return rs.getFloat(0);
+                return rs.getFloat("OverflowAmount");
             } else {
 
                 return 0;
@@ -170,6 +167,47 @@ public class DatabaseConnector {
         }
     }
 
+    public void setOverflowAmount(String player, float amount) {
+        Connection con = null;
+        Statement st = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+
+            st = con.createStatement();
+
+            rs = st.executeQuery("SELECT OverflowAmount FROM Players WHERE Name= \'" + player + "\';");
+
+            //Check if the player is in the database
+            if (rs.next()) {
+
+                st.executeUpdate("UPDATE Players set OverflowAmount = " + "\'" + amount + "\'" + "WHERE Name= \'" + player + "\';");
+            } else {
+
+                return;
+            }
+
+        } catch (SQLException e) {
+            parentPlugin.logSevere(e.getMessage());
+        } finally {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                parentPlugin.logSevere(e.getMessage());
+            }
+        }
+
+    }
+
     public DBAddResult addChest(String owner, Location chestLocation) {
 
         Connection con = null;
@@ -187,7 +225,6 @@ public class DatabaseConnector {
             while (rs.next()) {
 
                 if (rs.getString(3).equals(chestLocation.getWorld().getName()) && rs.getInt(4) == chestLocation.getBlockX() && rs.getInt(5) == chestLocation.getBlockY() && rs.getInt(6) == chestLocation.getBlockZ()) {
-                    parentPlugin.logMessage("match");
                     return DBAddResult.exists;
                 }
             }

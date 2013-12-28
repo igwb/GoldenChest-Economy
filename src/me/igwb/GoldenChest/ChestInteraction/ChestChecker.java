@@ -3,7 +3,6 @@ package me.igwb.GoldenChest.ChestInteraction;
 import me.igwb.GoldenChest.GoldAmount;
 
 import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.inventory.ItemStack;
 
 public final class ChestChecker {

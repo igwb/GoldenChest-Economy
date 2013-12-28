@@ -1,4 +1,5 @@
 package me.igwb.GoldenChest;
+import me.igwb.GoldenChest.ChestInteraction.ChestInteractor;
 import me.igwb.GoldenChest.Database.DatabaseConnector;
 import net.milkbowl.vault.economy.Economy;
 
@@ -13,6 +14,7 @@ public class Plugin extends JavaPlugin {
     private MyCommandExecutor commandExecutor;
     private DatabaseConnector dbConnector;
     private ChestRegisterer chestRegisterer;
+    private ChestInteractor myChestInteractor;
     private GoldConverter myGoldConverter;
     private TransactionManager myTransactionManager;
     private static Economy econ = null;
@@ -31,6 +33,7 @@ public class Plugin extends JavaPlugin {
 
         dbConnector = new DatabaseConnector(this);
         chestRegisterer = new ChestRegisterer(this);
+        myChestInteractor = new ChestInteractor(this);
         myGoldConverter = new GoldConverter(1);
         myTransactionManager = new TransactionManager(this);
 
@@ -65,9 +68,12 @@ public class Plugin extends JavaPlugin {
     private void registerCommands() {
 
         getCommand("registerChest").setExecutor(commandExecutor);
+
         getCommand("balance").setExecutor(commandExecutor);
         getCommand("money").setExecutor(commandExecutor);
         getCommand("bal").setExecutor(commandExecutor);
+
+        getCommand("grant").setExecutor(commandExecutor);
     }
 
     public void logMessage(final String message) {
@@ -90,6 +96,11 @@ public class Plugin extends JavaPlugin {
         return chestRegisterer;
     }
 
+    public ChestInteractor getChestInteractor() {
+
+        return myChestInteractor;
+    }
+
     public GoldConverter getGoldConverter() {
 
         return myGoldConverter;
@@ -102,7 +113,6 @@ public class Plugin extends JavaPlugin {
 
     public String getDbPath() {
 
-        logMessage(this.getDataFolder() + "/Money.db");
         return this.getDataFolder() + "/Money.db";
     }
 

@@ -42,4 +42,9 @@ public class GoldAmount {
         return overflowAmount;
     }
 
+    public String toString() {
+
+        return "Blocks " + blockCount + " Ingots " + ingotCount + " Nuggets " + nuggetCount + " Overflow " + overflowAmount;
+    }
+
 }
