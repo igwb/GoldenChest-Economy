@@ -1,6 +1,5 @@
 name: GoldenChest-Economy
 main: me.igwb.GoldenChest.Plugin
-depend: [Vault]
 version: 0.1
 commands:
    money:
@@ -12,4 +11,9 @@ commands:
       description: Shows an ordered list of bank accounts.
       usage: /top
       permission: GoldenChest.top
+      permission-message: You don't have permission to use that command!
+   registerChest:
+      description: Registers a chest.
+      usage: /registerChest
+      permission: GoldenChest.registerChest
       permission-message: You don't have permission to use that command!

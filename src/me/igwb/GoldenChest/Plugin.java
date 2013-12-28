@@ -10,23 +10,31 @@ public class Plugin extends JavaPlugin {
 
 
     private MyEventListener eventListener;
+    private MyCommandExecutor commandExecutor;
     private DatabaseConnector dbConnector;
+    private ChestRegisterer chestRegisterer;
     private static Economy econ = null;
 
     @Override
     public void onEnable() {
 
+        //TODO: Fix vault integration
+
+        /*
         if (!setupEconomy()) {
             logSevere("Vault not found! - Disabeling GoldenChest-Economy");
             getServer().getPluginManager().disablePlugin(this);
             return;
-        }
+        }*/
 
         dbConnector = new DatabaseConnector(this);
+        chestRegisterer = new ChestRegisterer(this);
 
         eventListener = new MyEventListener(this);
-        registerEvents();
+        commandExecutor = new MyCommandExecutor(this);
 
+        registerEvents();
+        registerCommands();
     }
 
 
@@ -47,6 +55,12 @@ public class Plugin extends JavaPlugin {
     private void registerEvents() {
 
         getServer().getPluginManager().registerEvents(eventListener, this);
+        getServer().getPluginManager().registerEvents(chestRegisterer, this);
+    }
+
+    private void registerCommands() {
+
+        getCommand("registerChest").setExecutor(commandExecutor);
     }
 
     public void logMessage(final String message) {
@@ -58,6 +72,17 @@ public class Plugin extends JavaPlugin {
 
         this.getLogger().severe(message);
     }
+
+    public DatabaseConnector getDbConnector() {
+
+        return dbConnector;
+    }
+
+    public ChestRegisterer getChestRegisterer() {
+
+        return chestRegisterer;
+    }
+
 
     public String getDbPath() {
 
