@@ -14,7 +14,7 @@ public final class ChestChecker {
 
     public static GoldAmount getChestBalance(final Chest checkThis) {
 
-        ItemStack[] contents = checkThis.getInventory().getContents();
+        ItemStack[] contents = checkThis.getBlockInventory().getContents();
 
         int blocks = 0, ingots = 0, nuggets = 0;
 
@@ -43,7 +43,7 @@ public final class ChestChecker {
         return new GoldAmount(blocks, ingots, nuggets);
     }
 
-    public static GoldAmount getChestBalance(final DoubleChest checkThis) {
+    /*public static GoldAmount getChestBalance(final DoubleChest checkThis) {
 
         ItemStack[] contents = checkThis.getInventory().getContents();
 
@@ -72,6 +72,6 @@ public final class ChestChecker {
         }
 
         return new GoldAmount(blocks, ingots, nuggets);
-    }
+    }*/
 
 }

@@ -13,6 +13,8 @@ public class Plugin extends JavaPlugin {
     private MyCommandExecutor commandExecutor;
     private DatabaseConnector dbConnector;
     private ChestRegisterer chestRegisterer;
+    private GoldConverter myGoldConverter;
+    private TransactionManager myTransactionManager;
     private static Economy econ = null;
 
     @Override
@@ -29,6 +31,8 @@ public class Plugin extends JavaPlugin {
 
         dbConnector = new DatabaseConnector(this);
         chestRegisterer = new ChestRegisterer(this);
+        myGoldConverter = new GoldConverter(1);
+        myTransactionManager = new TransactionManager(this);
 
         eventListener = new MyEventListener(this);
         commandExecutor = new MyCommandExecutor(this);
@@ -61,6 +65,9 @@ public class Plugin extends JavaPlugin {
     private void registerCommands() {
 
         getCommand("registerChest").setExecutor(commandExecutor);
+        getCommand("balance").setExecutor(commandExecutor);
+        getCommand("money").setExecutor(commandExecutor);
+        getCommand("bal").setExecutor(commandExecutor);
     }
 
     public void logMessage(final String message) {
@@ -83,6 +90,15 @@ public class Plugin extends JavaPlugin {
         return chestRegisterer;
     }
 
+    public GoldConverter getGoldConverter() {
+
+        return myGoldConverter;
+    }
+
+    public TransactionManager getTransactionManager() {
+
+        return myTransactionManager;
+    }
 
     public String getDbPath() {
 

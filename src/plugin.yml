@@ -7,6 +7,16 @@ commands:
       usage: /money [player]
       permission: GoldenChest.money
       permission-message: You don't have permission to use that command!
+   balance:
+      description: Check how much money someone has.
+      usage: /money [player]
+      permission: GoldenChest.money
+      permission-message: You don't have permission to use that command!
+   bal:
+      description: Check how much money someone has.
+      usage: /money [player]
+      permission: GoldenChest.money
+      permission-message: You don't have permission to use that command!
    top:
       description: Shows an ordered list of bank accounts.
       usage: /top

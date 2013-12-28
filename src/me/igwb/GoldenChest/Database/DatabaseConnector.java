@@ -1,5 +1,7 @@
 package me.igwb.GoldenChest.Database;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,6 +11,7 @@ import java.sql.Statement;
 import org.bukkit.Location;
 
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 
 import me.igwb.GoldenChest.Plugin;
 
@@ -42,7 +45,7 @@ public class DatabaseConnector {
 
 
             stat.executeUpdate("PRAGMA foreign_keys = ON;");
-            stat.executeUpdate("CREATE TABLE IF NOT EXISTS Players (Id INTEGER PRIMARY KEY, Name TEXT NOT NULL UNIQUE, Chests BLOB, OverflowAmount FLOAT);");
+            stat.executeUpdate("CREATE TABLE IF NOT EXISTS Players (Id INTEGER PRIMARY KEY, Name TEXT NOT NULL UNIQUE, OverflowAmount FLOAT);");
             stat.executeUpdate("CREATE TABLE IF NOT EXISTS Chests (Id INTEGER PRIMARY KEY, Owner TEXT NOT NULL, World STRING, X INTEGER, Y INTEGER, Z INTEGER);");
 
         } catch (SQLException e) {
@@ -179,7 +182,6 @@ public class DatabaseConnector {
             st = con.createStatement();
 
             rs = st.executeQuery("SELECT * FROM Chests WHERE Owner= \'" + owner + "\';");
-            parentPlugin.logMessage("selected");
 
             //Check if the chest is already in the database
             while (rs.next()) {
@@ -188,21 +190,18 @@ public class DatabaseConnector {
                     parentPlugin.logMessage("match");
                     return DBAddResult.exists;
                 }
-                parentPlugin.logMessage("checked");
             }
 
-            parentPlugin.logMessage("start insert");
 
+            //Insert the chest data into the database here
             pst = con.prepareStatement("INSERT INTO Chests(Owner, World, X, Y, Z) Values (?,?,?,?,?);");
             pst.setString(1, owner);
             pst.setString(2, chestLocation.getWorld().getName());
             pst.setInt(3, chestLocation.getBlockX());
             pst.setInt(4, chestLocation.getBlockY());
             pst.setInt(5, chestLocation.getBlockZ());
-
             pst.execute();
 
-            parentPlugin.logMessage("inserted");
 
             return DBAddResult.success;
 
@@ -224,7 +223,48 @@ public class DatabaseConnector {
                 parentPlugin.logSevere(e.getMessage());
             }
         }
+    }
 
+    public ArrayList<Location> getPlayersChests(String player) {
+
+        ArrayList<Location> chestLocations = new ArrayList<Location>();
+        Connection con = null;
+        Statement st = null;
+        ResultSet rs = null;
+
+        try {
+
+            Location currentLocation;
+
+            con = getConnection();
+            st = con.createStatement();
+
+            rs = st.executeQuery("SELECT * FROM Chests WHERE Owner= \'" + player + "\';");
+
+            while (rs.next()) {
+                currentLocation = new Location(parentPlugin.getServer().getWorld(rs.getString("World")), rs.getDouble("X"), rs.getDouble("Y"), rs.getDouble("Z"));
+                chestLocations.add(currentLocation);
+            }
+
+            return chestLocations;
+        } catch (SQLException e) {
+            parentPlugin.logSevere(e.getMessage());
+            return chestLocations;
+        } finally {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                parentPlugin.logSevere(e.getMessage());
+            }
+        }
     }
 
     public void removeChest(String owner, Location chestLocation) {

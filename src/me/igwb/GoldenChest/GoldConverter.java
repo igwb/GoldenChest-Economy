@@ -1,12 +1,16 @@
 package me.igwb.GoldenChest;
 
+import me.igwb.GoldenChest.ChestInteraction.ChestChecker;
+
+import org.bukkit.block.Chest;
+
 public class GoldConverter {
 
     private final float exchangeRate;
 
     public GoldConverter(final float nuggetValue) {
 
-        if (nuggetValue <= 0) {
+        if (nuggetValue > 0) {
             exchangeRate = nuggetValue;
         } else {
             throw new IllegalArgumentException("NuggetValue must be bigger than 0!");
@@ -14,7 +18,7 @@ public class GoldConverter {
     }
 
     public float convertGoldToMoney(GoldAmount toConvert) {
-
+        
         float value = 0;
 
         value += toConvert.getNuggets() * exchangeRate;

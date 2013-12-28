@@ -26,6 +26,16 @@ public class MyCommandExecutor implements CommandExecutor {
             registerChest(arg0);
 
             break;
+        case "pay":
+
+            break;
+        case "money": case "balance": case "bal":
+            if (arg3 == null || arg3.length < 1) {
+                balance(arg0, null);
+            } else {
+                balance(arg0, arg3[0]);
+            }
+            break;
         default:
 
             break;
@@ -48,4 +58,26 @@ public class MyCommandExecutor implements CommandExecutor {
         return false;
     }
 
+    private boolean pay() {
+        return false;
+    }
+
+    private boolean balance(CommandSender sender, String player) {
+
+        float balance;
+
+        if (player == null) {
+            
+            balance = parentPlugin.getTransactionManager().getBalance(sender.getName());
+            sender.sendMessage("Your current balance is: " + balance + ".");
+        } else {
+            
+            balance = parentPlugin.getTransactionManager().getBalance(player);
+            sender.sendMessage(player + " currently has " + balance + ".");
+        }
+
+
+
+        return true;
+    }
 }

@@ -2,11 +2,8 @@ package me.igwb.GoldenChest;
 
 import java.util.ArrayList;
 
-import me.igwb.GoldenChest.ChestInteraction.ChestChecker;
 import me.igwb.GoldenChest.Database.DBAddResult;
 
-import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
