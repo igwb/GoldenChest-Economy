@@ -12,8 +12,6 @@ Chests:
 #How many chests is one player allowed to register as  his "wallet".
 #Two should be enough. For a nugget value of 1 a double chest can hold up to 279936 currency.
    maximumAllowed: 2
-#Highly recommended! If set to false players will be able to use any chest as their "wallet", potentialy bypassing chest protections.
-   useLWC: true
 
 Payments:
 #Will players be able to use /pay ?

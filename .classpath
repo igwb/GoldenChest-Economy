@@ -12,5 +12,6 @@
 			<attribute name="javadoc_location" value="http://jd.bukkit.org/beta/apidocs/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Bodo Beyer/workspace/Plugins/LWC.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

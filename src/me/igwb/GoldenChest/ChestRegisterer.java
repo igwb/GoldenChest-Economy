@@ -4,12 +4,16 @@ import java.util.ArrayList;
 
 import me.igwb.GoldenChest.Database.DBAddResult;
 
+import org.bukkit.Location;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+
+import com.griefcraft.model.Protection;
+import com.griefcraft.model.Protection.Type;
 
 public class ChestRegisterer implements Listener {
 
@@ -33,11 +37,33 @@ public class ChestRegisterer implements Listener {
 
         DBAddResult result, secondResult;
 
+        Location loc1, loc2;
+        Protection prot;
+
         if (playersRegistering.contains(e.getPlayer().getName())) {
             if (e.getInventory().getHolder() instanceof Chest) {
 
+                //Check the chest with LWC
+                loc1 = ((Chest) e.getInventory().getHolder()).getLocation();
+                prot = parentPlugin.getLwc().findProtection(loc1.getBlock());
 
-                result = parentPlugin.getDbConnector().addChest(e.getPlayer().getName(), ((Chest) e.getInventory().getHolder()).getLocation());
+                if (prot != null) {
+                    if (prot.getOwner().equals(e.getPlayer().getName())) {
+                        if (prot.getType() != Type.PRIVATE) {
+                            ((Player) e.getPlayer()).sendMessage("Warning! The chest you're trying to register is not private!");
+                            return;
+                        }
+                    } else {
+                        ((Player) e.getPlayer()).sendMessage("You do not own this chest!");
+                        return;
+                    }
+                } else {
+                    ((Player) e.getPlayer()).sendMessage("You can not register an unprotected chest!");
+                    return;
+                }
+
+                //Register the chest
+                result = parentPlugin.getDbConnector().addChest(e.getPlayer().getName(), loc1);
 
                 switch (result) {
                 case success:
@@ -54,9 +80,59 @@ public class ChestRegisterer implements Listener {
                 }
             } else if (e.getInventory().getHolder() instanceof DoubleChest) {
 
-                result = parentPlugin.getDbConnector().addChest(e.getPlayer().getName(), ((Chest) ((DoubleChest) e.getInventory().getHolder()).getLeftSide()).getLocation());
-                secondResult = parentPlugin.getDbConnector().addChest(e.getPlayer().getName(), ((Chest) ((DoubleChest) e.getInventory().getHolder()).getRightSide()).getLocation());
+                //Get the chest locations
+                loc1 = ((Chest) ((DoubleChest) e.getInventory().getHolder()).getLeftSide()).getLocation();
+                loc2 = ((Chest) ((DoubleChest) e.getInventory().getHolder()).getRightSide()).getLocation();
 
+                //Check protection 1 with LWC
+                prot = parentPlugin.getLwc().findProtection(loc1.getBlock());
+
+                if (prot != null) {
+                    if (prot.getOwner().equals(e.getPlayer().getName())) {
+                        if (prot.getType() != Type.PRIVATE && parentPlugin.getFileConfig().getBoolean("Chests.privateOnly")) {
+                            ((Player) e.getPlayer()).sendMessage("Only private chests can be registered!");
+                            return;
+                        }
+                    } else {
+                        ((Player) e.getPlayer()).sendMessage("You do not own this chest!");
+                        return;
+                    }
+                } else {
+                    ((Player) e.getPlayer()).sendMessage("You can not register an unprotected chest!");
+                    return;
+                }
+
+                //Check protection 2 with LWC
+                prot = parentPlugin.getLwc().findProtection(loc2.getBlock());
+
+                if (prot != null) {
+                    if (prot.getOwner().equals(e.getPlayer().getName())) {
+                        if (prot.getType() != Type.PRIVATE) {
+                            ((Player) e.getPlayer()).sendMessage("Warning! The chest you're trying to register is not private!");
+                        }
+                    } else {
+                        ((Player) e.getPlayer()).sendMessage("You do not own this chest!");
+                        return;
+                    }
+                } else {
+                    ((Player) e.getPlayer()).sendMessage("You can not register an unprotected chest!");
+                    return;
+                }
+
+                //Try to register the first chest
+                result = parentPlugin.getDbConnector().addChest(e.getPlayer().getName(), loc1);
+
+                //Check if the player is allowed to register another chest;
+                if (parentPlugin.getDbConnector().getPlayersChests(e.getPlayer().getName()).size() < parentPlugin.getFileConfig().getInt("Chests.maximumAllowed")) {
+                    secondResult = parentPlugin.getDbConnector().addChest(e.getPlayer().getName(), loc2);
+                } else {
+                    if (result == DBAddResult.success) {
+                        ((Player) e.getPlayer()).sendMessage("One chest registered. You're not allowed to have more.");
+                    } else {
+                        ((Player) e.getPlayer()).sendMessage("No chest was registered. Please try a single chest instead of a double chest.");
+                    }
+                    return;
+                }
                 if (result == DBAddResult.success && secondResult == DBAddResult.success) {
 
                     ((Player) e.getPlayer()).sendMessage("You have registered one doublechest successfuly.");

@@ -3,9 +3,13 @@ import me.igwb.GoldenChest.ChestInteraction.ChestInteractor;
 import me.igwb.GoldenChest.Database.DatabaseConnector;
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
 
 
 public class Plugin extends JavaPlugin {
@@ -18,6 +22,8 @@ public class Plugin extends JavaPlugin {
     private ChestInteractor myChestInteractor;
     private GoldConverter myGoldConverter;
     private TransactionManager myTransactionManager;
+
+    private LWC lwc;
 
     private static int CONFIG_VERSION = 0;
     //TODO: Capitalize this
@@ -35,6 +41,12 @@ public class Plugin extends JavaPlugin {
             return;
         }*/
 
+        if (!setupLWC()) {
+            logSevere("LWC not found! - Disabeling GoldenChest-Economy");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         dbConnector = new DatabaseConnector(this);
         chestRegisterer = new ChestRegisterer(this);
         myChestInteractor = new ChestInteractor(this);
@@ -48,6 +60,16 @@ public class Plugin extends JavaPlugin {
         registerCommands();
     }
 
+    private boolean setupLWC() {
+        if (getServer().getPluginManager().getPlugin("LWC") == null) {
+            logSevere("No LWC found!");
+            return false;
+        }
+
+        org.bukkit.plugin.Plugin lwcp = Bukkit.getPluginManager().getPlugin("LWC");
+        lwc = ((LWCPlugin) lwcp).getLWC();
+        return true;
+    }
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -128,10 +150,15 @@ public class Plugin extends JavaPlugin {
         this.saveDefaultConfig();
 
         //Check if the config version matches
-        if (getFileConfig().getInt("version") != CONFIG_VERSION) {
+        if (config.getInt("version") != CONFIG_VERSION) {
             logSevere("The config is not up to date!");
         }
 
         return config;
+    }
+
+    public LWC getLwc() {
+        
+        return lwc;
     }
 }

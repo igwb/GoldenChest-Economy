@@ -21,26 +21,21 @@ public class MyCommandExecutor implements CommandExecutor {
 
         switch (arg1.getName().toLowerCase()) {
         case "registerchest":
-            registerChest(arg0);
-
-            break;
+            return registerChest(arg0);
         case "pay":
 
             break;
         case "money": case "balance": case "bal":
             if (arg3 == null || arg3.length < 1) {
-                balance(arg0, null);
+                return balance(arg0, null);
             } else {
-                balance(arg0, arg3[0]);
+               return balance(arg0, arg3[0]);
             }
-            break;
         case "grant":
-            grant(arg0, arg3);
-            break;
+            return grant(arg0, arg3);
         case "take":
-            take(arg0, arg3);
+            return take(arg0, arg3);
         default:
-
             break;
         }
         return false;
@@ -49,16 +44,19 @@ public class MyCommandExecutor implements CommandExecutor {
 
     private boolean registerChest(CommandSender sender) {
 
-        Player player;
-
         if (sender instanceof Player) {
-            parentPlugin.getChestRegisterer().startsRegistering((Player) sender);
+            if (parentPlugin.getDbConnector().getPlayersChests(sender.getName()).size() < parentPlugin.getFileConfig().getInt("Chests.maximumAllowed")) {
+                sender.sendMessage("Open a chest to register it.");
+                parentPlugin.getChestRegisterer().startsRegistering((Player) sender);
+            } else {
+                sender.sendMessage("You are not allowed to register another chest.");
+            }
         } else {
             sender.sendMessage("This command can only be run by a player!");
         }
 
 
-        return false;
+        return true;
     }
 
     private boolean pay() {
