@@ -36,6 +36,9 @@ public class MyCommandExecutor implements CommandExecutor {
             break;
         case "grant":
             grant(arg0, arg3);
+            break;
+        case "take":
+            take(arg0, arg3);
         default:
 
             break;
@@ -84,6 +87,9 @@ public class MyCommandExecutor implements CommandExecutor {
     private boolean grant(CommandSender sender, String[] arg3) {
         try {
             if (arg3 != null && arg3.length == 2) {
+
+                parentPlugin.getTransactionManager().storeOverflowToChest(arg3[0]);
+
                 parentPlugin.getTransactionManager().giveMoney(arg3[0], Float.parseFloat(arg3[1]));
                 sender.sendMessage(arg3[0] + " was granted " + arg3[1] + ".");
                 sender.sendMessage(parentPlugin.getGoldConverter().convertMoneyToGold(Float.parseFloat(arg3[1])).toString());
@@ -100,6 +106,46 @@ public class MyCommandExecutor implements CommandExecutor {
         } catch (Exception e) {
             sender.sendMessage("Invalid argument!");
             sender.sendMessage("/grant [player] [amount]");
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    private boolean take(CommandSender sender, String[] arg3) {
+        try {
+            TransactionResult result;
+
+            if (arg3 != null && arg3.length == 2) {
+
+                parentPlugin.getTransactionManager().storeOverflowToChest(arg3[0]);
+
+                result = parentPlugin.getTransactionManager().takeMoney(arg3[0], Float.parseFloat(arg3[1]));
+
+                switch (result) {
+                case successful:
+                    sender.sendMessage(arg3[0] + " lost " + arg3[1] + ".");
+                    sender.sendMessage(parentPlugin.getGoldConverter().convertMoneyToGold(Float.parseFloat(arg3[1])).toString());
+                    break;
+                case insufficientFunds:
+                    sender.sendMessage(arg3[0] + " doesn't have enough money.");
+                    break;
+                default:
+                    break;
+                }
+
+            } else {
+                sender.sendMessage("This command accepts two arguments only!");
+                sender.sendMessage("/take [player] [amount]");
+            }
+
+            return true;
+        } catch (NumberFormatException e) {
+            sender.sendMessage("Amount must be a number!");
+            sender.sendMessage("/take [player] [amount]");
+            return true;
+        } catch (Exception e) {
+            sender.sendMessage("Invalid argument!");
+            sender.sendMessage("/take [player] [amount]");
             e.printStackTrace();
             return true;
         }

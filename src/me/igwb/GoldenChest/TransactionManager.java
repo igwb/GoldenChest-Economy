@@ -18,14 +18,54 @@ public class TransactionManager {
 
     public TransactionResult takeMoney(String player, float amount) {
 
+        float amountToTake;
         ArrayList<Location> chests = parentPlugin.getDbConnector().getPlayersChests(player);
+
+
+        //Check if the overflow amount is sufficient for this transaction
+        if (parentPlugin.getDbConnector().getOveflowAmount(player) >= amount) {
+            parentPlugin.getDbConnector().setOverflowAmount(player, parentPlugin.getDbConnector().getOveflowAmount(player) - amount);
+
+
+
+            return TransactionResult.successful;
+        } else {
+            amountToTake = amount - parentPlugin.getDbConnector().getOveflowAmount(player);
+        }
+
         if (getBalance(player) >= amount) {
 
+            for (Location loc : chests) {
+                amountToTake = parentPlugin.getChestInteractor().takeGold(amountToTake, ((Chest) loc.getBlock().getState())).getNotProcessed();
+                if (amountToTake == 0) {
+                    parentPlugin.getDbConnector().setOverflowAmount(player, amountToTake);
+                    return TransactionResult.successful;
+                }
+            }
+
+            parentPlugin.getDbConnector().setOverflowAmount(player, amountToTake);
 
             return TransactionResult.successful;
         } else {
             return TransactionResult.insufficientFunds;
         }
+    }
+
+    /**
+     * Tries to store the players overflow amount as item in his chests.
+     * @param player
+     * @return Returns fault if there is not enough space in the chests.
+     */
+    public Boolean storeOverflowToChest(String player) {
+
+        float overflow = parentPlugin.getDbConnector().getOveflowAmount(player);
+
+        if (overflow >= parentPlugin.getNuggetValue()) {
+            takeMoney(player, overflow);
+            giveMoney(player, overflow);
+        }
+
+        return !(parentPlugin.getDbConnector().getOveflowAmount(player) >= parentPlugin.getNuggetValue());
     }
 
     public void giveMoney(String player, float amount) {

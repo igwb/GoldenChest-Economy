@@ -19,71 +19,71 @@ public final class ChestInteractor {
 
 
     /**
-     * @param amount The amount to deposit
+     * @param amount The amount to deposit into the chest
      * @param targetChest Deposit into this chest
      * @return Returns the amount of money that could not be deposited.
      */
     public GoldTransactionResult depositGold(final Float amount, final Chest targetChest) {
 
+        Float chestBalance, targetBalance, amountNotDeposited;
+
+        chestBalance = parentPlugin.getGoldConverter().convertGoldToMoney(ChestChecker.getChestBalance(targetChest));
+        targetBalance = chestBalance + amount;
+
+        parentPlugin.logMessage("adding " + amount + " to " + chestBalance + " target: " + targetBalance);
+
+        amountNotDeposited = setGold(targetBalance, targetChest).getNotProcessed();
+
+        parentPlugin.logMessage("not deposited: " + amountNotDeposited);
+
+        return new GoldTransactionResult(GoldTransactionResultType.SUCCESSFUL, amountNotDeposited);
+    }
+
+    /**
+     * @param amount The amount to set in the target chest
+     * @param targetChest Modify this chest
+     * @return Returns the amount of money that could not be deposited.
+     */
+    public GoldTransactionResult setGold(float amount, Chest targetChest) {
+
         GoldAmount goldToDeposit;
         Integer blocks = 0, ingots = 0, nuggets = 0;
+        ItemStack stack = null;
 
         goldToDeposit = parentPlugin.getGoldConverter().convertMoneyToGold(amount);
-
-
         blocks = goldToDeposit.getBlocks();
         ingots = goldToDeposit.getIngots();
         nuggets = goldToDeposit.getNuggets();
 
+
         ItemStack[] contents = targetChest.getBlockInventory().getContents();
 
-        //Try to deposit the items on existing stacks
-        for (ItemStack itemStack : contents) {
-            if (itemStack != null) {
-                switch (itemStack.getType()) {
+
+        //Remove all currency items previously present.
+        for (int i = 0; i < targetChest.getBlockInventory().getSize(); i++) {
+            stack = contents[i];
+            if (stack != null) {
+                switch (stack.getType()) {
                 case GOLD_BLOCK:
-                    if (blocks >= 1) {
-                        if (itemStack.getMaxStackSize() - itemStack.getAmount() >= blocks) {
-                            itemStack.setAmount(itemStack.getAmount() + blocks);
-                            blocks = 0;
-                        } else {
-                            blocks -= itemStack.getMaxStackSize() - itemStack.getAmount();
-                            itemStack.setAmount(itemStack.getMaxStackSize());
-                        }
-                    }
+                    stack.setAmount(0);
                     break;
                 case GOLD_INGOT:
-                    if (ingots >= 1) {
-                        if (itemStack.getMaxStackSize() - itemStack.getAmount() >= ingots) {
-                            itemStack.setAmount(itemStack.getAmount() + ingots);
-                            ingots = 0;
-                        } else {
-                            ingots -= itemStack.getMaxStackSize() - itemStack.getAmount();
-                            itemStack.setAmount(itemStack.getMaxStackSize());
-                        }
-                    }
+                    stack.setAmount(0);
                     break;
                 case GOLD_NUGGET:
-                    if (nuggets >= 1) {
-                        if (itemStack.getMaxStackSize() - itemStack.getAmount() >= nuggets) {
-                            itemStack.setAmount(itemStack.getAmount() + nuggets);
-                            nuggets = 0;
-                        } else {
-                            nuggets -= itemStack.getMaxStackSize() - itemStack.getAmount();
-                            itemStack.setAmount(itemStack.getMaxStackSize());
-                        }
-                    }
+                    stack.setAmount(0);
+                    break;
                 default:
                     break;
                 }
+
+                targetChest.getBlockInventory().setItem(i, stack);
             }
         }
 
-
-        //Create new item stacks if not all items are deposited already.
-
+        //Deposit the new items.
         int empty;
-        ItemStack stack = null;
+        stack = null;
 
         while (blocks > 0 | nuggets > 0 | ingots > 0) {
             empty = targetChest.getBlockInventory().firstEmpty();
@@ -132,6 +132,33 @@ public final class ChestInteractor {
                 return new GoldTransactionResult(GoldTransactionResultType.SUCCESSFUL, parentPlugin.getGoldConverter().convertGoldToMoney(new GoldAmount(blocks, ingots, nuggets, goldToDeposit.getoverflowMoney())));
             }
         }
+
+    }
+
+    /**
+     * @param amount The amount to take from the target chest
+     * @param targetChest Take from this chest
+     * @return Returns the amount of money that could not be deposited.
+     */
+    public GoldTransactionResult takeGold(float amount, Chest targetChest) {
+
+        Float chestBalance, targetBalance, amountNotTaken;
+
+        chestBalance = parentPlugin.getGoldConverter().convertGoldToMoney(ChestChecker.getChestBalance(targetChest));
+
+        if (chestBalance < amount) {
+
+            targetBalance = 0f;
+            amountNotTaken = amount - chestBalance;
+        } else {
+
+            targetBalance = chestBalance - amount;
+            amountNotTaken = 0f;
+        }
+
+        amountNotTaken += setGold(targetBalance, targetChest).getNotProcessed();
+
+        return new GoldTransactionResult(GoldTransactionResultType.SUCCESSFUL, amountNotTaken);
     }
 
 }

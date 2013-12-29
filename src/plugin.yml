@@ -22,6 +22,11 @@ commands:
       usage: /grant [player] [amount]
       permission: GoldenChest.grant
       permission-message: You don't have permission to use that command!
+   take:
+      description: Takes a specified amount of money from a player.
+      usage: /take [player] [amount]
+      permission: GoldenChest.take
+      permission-message: You don't have permission to use that command!
    top:
       description: Shows an ordered list of bank accounts.
       usage: /top

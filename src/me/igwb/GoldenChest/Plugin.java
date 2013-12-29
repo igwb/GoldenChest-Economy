@@ -19,6 +19,8 @@ public class Plugin extends JavaPlugin {
     private TransactionManager myTransactionManager;
     private static Economy econ = null;
 
+    private int nuggetValue = 1;
+
     @Override
     public void onEnable() {
 
@@ -30,6 +32,7 @@ public class Plugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }*/
+
 
         dbConnector = new DatabaseConnector(this);
         chestRegisterer = new ChestRegisterer(this);
@@ -74,6 +77,7 @@ public class Plugin extends JavaPlugin {
         getCommand("bal").setExecutor(commandExecutor);
 
         getCommand("grant").setExecutor(commandExecutor);
+        getCommand("take").setExecutor(commandExecutor);
     }
 
     public void logMessage(final String message) {
@@ -114,6 +118,10 @@ public class Plugin extends JavaPlugin {
     public String getDbPath() {
 
         return this.getDataFolder() + "/Money.db";
+    }
+
+    public int getNuggetValue() {
+        return nuggetValue;
     }
 
 }
