@@ -60,12 +60,12 @@ public class TransactionManager {
 
         float overflow = parentPlugin.getDbConnector().getOveflowAmount(player);
 
-        if (overflow >= parentPlugin.getNuggetValue()) {
+        if (overflow >= Float.parseFloat(parentPlugin.getFileConfig().getString("Economy-Settings.nuggetValue"))) {
             takeMoney(player, overflow);
             giveMoney(player, overflow);
         }
 
-        return !(parentPlugin.getDbConnector().getOveflowAmount(player) >= parentPlugin.getNuggetValue());
+        return !(parentPlugin.getDbConnector().getOveflowAmount(player) >= Float.parseFloat(parentPlugin.getFileConfig().getString("Economy-Settings.nuggetValue")));
     }
 
     public void giveMoney(String player, float amount) {

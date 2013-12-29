@@ -1,0 +1,36 @@
+###################################
+#       GoldenChest Economy       #
+###################################
+
+
+Economy-Settings:
+#How much is a gold nugget worth. Accepts decimal places. Must be bigger than 0
+#Changing the nugget value after the plugin has been in use may lead to unexpected results.
+   nuggetValue: 1.0
+
+Chests:
+#How many chests is one player allowed to register as  his "wallet".
+#Two should be enough. For a nugget value of 1 a double chest can hold up to 279936 currency.
+   maximumAllowed: 2
+#Highly recommended! If set to false players will be able to use any chest as their "wallet", potentialy bypassing chest protections.
+   useLWC: true
+
+Payments:
+#Will players be able to use /pay ?
+   enablePayCommand: true
+#Will players revieve a message when they loose or get money?
+#The message will be sent regardles of what trigered the transaction.
+   notifyOnIncomming: false
+   notifyOnOutgoing: false
+
+Permissions:
+#Players with OP-Status have all permissions for this plugin. Not recommended.
+   opHasAllPermissions: false
+
+
+###################################
+#       Developer options         #
+###################################
+Debug: false
+#Please do not modify the version number. The plugin will break.
+Version: 0

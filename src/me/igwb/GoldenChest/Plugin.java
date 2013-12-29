@@ -3,6 +3,7 @@ import me.igwb.GoldenChest.ChestInteraction.ChestInteractor;
 import me.igwb.GoldenChest.Database.DatabaseConnector;
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,9 +18,10 @@ public class Plugin extends JavaPlugin {
     private ChestInteractor myChestInteractor;
     private GoldConverter myGoldConverter;
     private TransactionManager myTransactionManager;
-    private static Economy econ = null;
 
-    private int nuggetValue = 1;
+    private static int CONFIG_VERSION = 0;
+    //TODO: Capitalize this
+    private static Economy econ = null;
 
     @Override
     public void onEnable() {
@@ -33,11 +35,10 @@ public class Plugin extends JavaPlugin {
             return;
         }*/
 
-
         dbConnector = new DatabaseConnector(this);
         chestRegisterer = new ChestRegisterer(this);
         myChestInteractor = new ChestInteractor(this);
-        myGoldConverter = new GoldConverter(1);
+        myGoldConverter = new GoldConverter(Float.parseFloat(getFileConfig().getString("Economy-Settings.nuggetValue")));
         myTransactionManager = new TransactionManager(this);
 
         eventListener = new MyEventListener(this);
@@ -120,8 +121,17 @@ public class Plugin extends JavaPlugin {
         return this.getDataFolder() + "/Money.db";
     }
 
-    public int getNuggetValue() {
-        return nuggetValue;
-    }
+    public FileConfiguration getFileConfig() {
 
+        FileConfiguration config = this.getConfig();
+        config.options().copyDefaults();
+        this.saveDefaultConfig();
+
+        //Check if the config version matches
+        if (getFileConfig().getInt("version") != CONFIG_VERSION) {
+            logSevere("The config is not up to date!");
+        }
+
+        return config;
+    }
 }
