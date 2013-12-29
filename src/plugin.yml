@@ -28,10 +28,10 @@ commands:
       usage: /take [player] [amount]
       permission: GoldenChest.take
       permission-message: You don't have permission to use that command!
-   top:
-      description: Shows an ordered list of bank accounts.
-      usage: /top
-      permission: GoldenChest.top
+   pay:
+      description: Pays money to a player.
+      usage: /pay [player] [amount]
+      permission: GoldenChest.pay
       permission-message: You don't have permission to use that command!
    registerChest:
       description: Registers a chest.

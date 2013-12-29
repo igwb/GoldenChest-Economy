@@ -23,13 +23,12 @@ public class MyCommandExecutor implements CommandExecutor {
         case "registerchest":
             return registerChest(arg0);
         case "pay":
-
-            break;
+            return pay(arg0, arg3);
         case "money": case "balance": case "bal":
             if (arg3 == null || arg3.length < 1) {
                 return balance(arg0, null);
             } else {
-               return balance(arg0, arg3[0]);
+                return balance(arg0, arg3[0]);
             }
         case "grant":
             return grant(arg0, arg3);
@@ -59,8 +58,60 @@ public class MyCommandExecutor implements CommandExecutor {
         return true;
     }
 
-    private boolean pay() {
-        return false;
+    private boolean pay(CommandSender sender, String[] args) {
+
+        try {
+            //Check if payments are enabled
+            if (parentPlugin.getFileConfig().getBoolean("Payments.enablePayCommand")) {
+
+                //check if we are dealing with a player
+                if (sender instanceof Player) {
+
+                    //Check if the argument count is correct
+                    if (args != null && args.length == 2) {
+
+                        //Check if the player has an account
+                        if (parentPlugin.getDbConnector().getPlayersChests(args[0]).size() > 0) {
+
+                            //Check if the player has enough money.
+                            if (parentPlugin.getTransactionManager().getBalance(((Player) sender).getName()) >= Float.parseFloat(args[1])) {
+
+                                //Finally pay the money.
+                                if (parentPlugin.getTransactionManager().takeMoney(((Player) sender).getName(), Float.parseFloat(args[1])) == TransactionResult.successful) {
+                                    parentPlugin.getTransactionManager().giveMoney(args[0], Float.parseFloat(args[1]));
+                                    sender.sendMessage("You've payed " + args[1] + " to " + args[0]);
+                                }
+
+
+                            } else {
+                                sender.sendMessage("You do not have enough money!");
+                            }
+                        } else {
+                            sender.sendMessage("The player you specified does not have an account.");
+                        }
+                    } else {
+                        sender.sendMessage("This command accepts two arguments only!");
+                        sender.sendMessage("/pay [player] [amount]");
+                    }
+                } else {
+                    sender.sendMessage("This command can only be run by a player!");
+                }
+            } else {
+                sender.sendMessage("/pay is currently disabled.");
+            }
+
+            return true;
+
+        } catch (NumberFormatException e) {
+            sender.sendMessage("Amount must be a number!");
+            sender.sendMessage("/pay [player] [amount]");
+            return true;
+        } catch (Exception e) {
+            sender.sendMessage("Invalid argument!");
+            sender.sendMessage("/pay [player] [amount]");
+            e.printStackTrace();
+            return true;
+        }
     }
 
     private boolean balance(CommandSender sender, String player) {

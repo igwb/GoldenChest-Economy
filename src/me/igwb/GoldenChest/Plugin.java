@@ -101,6 +101,8 @@ public class Plugin extends JavaPlugin {
 
         getCommand("grant").setExecutor(commandExecutor);
         getCommand("take").setExecutor(commandExecutor);
+        
+        getCommand("pay").setExecutor(commandExecutor);
     }
 
     public void logMessage(final String message) {
