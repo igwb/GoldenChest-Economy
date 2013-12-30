@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 public class MyCommandExecutor implements CommandExecutor {
 
 
-    private final Plugin parentPlugin;
+    private final GoldenChestEconomy parentPlugin;
 
-    public MyCommandExecutor(Plugin parent) {
+    public MyCommandExecutor(GoldenChestEconomy parent) {
 
         parentPlugin = parent;
 

@@ -7,9 +7,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class MyEventListener implements Listener {
 
-    private Plugin parentPlugin;
+    private GoldenChestEconomy parentPlugin;
 
-    public MyEventListener(final Plugin parent) {
+    public MyEventListener(final GoldenChestEconomy parent) {
 
         parentPlugin = parent;
     }

@@ -17,10 +17,10 @@ import com.griefcraft.model.Protection.Type;
 
 public class ChestRegisterer implements Listener {
 
-    private final Plugin parentPlugin;
+    private final GoldenChestEconomy parentPlugin;
     private ArrayList<String> playersRegistering = new ArrayList<>();
 
-    public ChestRegisterer(Plugin parent) {
+    public ChestRegisterer(GoldenChestEconomy parent) {
 
         parentPlugin = parent;
     }

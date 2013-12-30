@@ -9,9 +9,9 @@ import org.bukkit.block.Chest;
 
 public class TransactionManager {
 
-    private Plugin parentPlugin;
+    private GoldenChestEconomy parentPlugin;
 
-    public TransactionManager(Plugin parent) {
+    public TransactionManager(GoldenChestEconomy parent) {
 
         parentPlugin = parent;
     }

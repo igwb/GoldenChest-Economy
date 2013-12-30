@@ -11,13 +11,13 @@ import org.bukkit.Location;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
-import me.igwb.GoldenChest.Plugin;
+import me.igwb.GoldenChest.GoldenChestEconomy;
 
 public class DatabaseConnector {
 
-    private Plugin parentPlugin;
+    private GoldenChestEconomy parentPlugin;
 
-    public DatabaseConnector(final Plugin parent)  {
+    public DatabaseConnector(final GoldenChestEconomy parent)  {
 
         try {
             parentPlugin = parent;

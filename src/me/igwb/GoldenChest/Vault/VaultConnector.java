@@ -2,11 +2,22 @@ package me.igwb.GoldenChest.Vault;
 
 import java.util.List;
 
+import me.igwb.GoldenChest.GoldenChestEconomy;
+import me.igwb.GoldenChest.TransactionResult;
+import me.igwb.GoldenChest.Database.DBAddResult;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 
 public class VaultConnector implements Economy {
+
+    private GoldenChestEconomy parentPlugin;
+
+    public VaultConnector(GoldenChestEconomy parent) {
+
+        parentPlugin = parent;
+    }
+
 
     @Override
     public EconomyResponse bankBalance(String arg0) {
@@ -40,14 +51,14 @@ public class VaultConnector implements Economy {
 
     @Override
     public boolean createPlayerAccount(String arg0) {
-        // TODO Auto-generated method stub
-        return false;
+
+        return parentPlugin.getDbConnector().addPlayer(arg0) != DBAddResult.error;
     }
 
     @Override
     public boolean createPlayerAccount(String arg0, String arg1) {
-        // TODO Auto-generated method stub
-        return false;
+
+        return parentPlugin.getDbConnector().addPlayer(arg0) != DBAddResult.error;
     }
 
     @Override
@@ -70,38 +81,42 @@ public class VaultConnector implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(String arg0, double arg1) {
-        // TODO Auto-generated method stub
-        return null;
+
+        parentPlugin.getTransactionManager().giveMoney(arg0, Float.parseFloat(String.valueOf(arg1)));
+
+        return new EconomyResponse(arg1, getBalance(arg0), ResponseType.SUCCESS, null);
     }
 
     @Override
     public EconomyResponse depositPlayer(String arg0, String arg1, double arg2) {
-        // TODO Auto-generated method stub
-        return null;
+
+        parentPlugin.getTransactionManager().giveMoney(arg0, Float.parseFloat(String.valueOf(arg2)));
+
+        return new EconomyResponse(arg2, getBalance(arg0), ResponseType.SUCCESS, null);
     }
 
     @Override
     public String format(double arg0) {
-        // TODO Auto-generated method stub
-        return null;
+
+        return String.valueOf(arg0);
     }
 
     @Override
     public int fractionalDigits() {
-        // TODO Auto-generated method stub
-        return 0;
+
+        return -1;
     }
 
     @Override
     public double getBalance(String arg0) {
-        // TODO Auto-generated method stub
-        return 0;
+
+        return parentPlugin.getTransactionManager().getBalance(arg0);
     }
 
     @Override
     public double getBalance(String arg0, String arg1) {
-        // TODO Auto-generated method stub
-        return 0;
+
+        return parentPlugin.getTransactionManager().getBalance(arg0);
     }
 
     @Override
@@ -113,31 +128,31 @@ public class VaultConnector implements Economy {
     @Override
     public String getName() {
 
-        return "GoldenChest-Economy";
+        return "GoldenChestEconomy";
     }
 
     @Override
     public boolean has(String arg0, double arg1) {
-        // TODO Auto-generated method stub
-        return false;
+
+        return getBalance(arg0) >= arg1;
     }
 
     @Override
     public boolean has(String arg0, String arg1, double arg2) {
-        // TODO Auto-generated method stub
-        return false;
+
+        return getBalance(arg0) >= arg2;
     }
 
     @Override
     public boolean hasAccount(String arg0) {
-        // TODO Auto-generated method stub
-        return false;
+
+        return parentPlugin.getDbConnector().addPlayer(arg0) != DBAddResult.error;
     }
 
     @Override
     public boolean hasAccount(String arg0, String arg1) {
-        // TODO Auto-generated method stub
-        return false;
+
+        return parentPlugin.getDbConnector().addPlayer(arg0) != DBAddResult.error;
     }
 
     @Override
@@ -160,19 +175,44 @@ public class VaultConnector implements Economy {
 
     @Override
     public boolean isEnabled() {
-        // TODO Auto-generated method stub
-        return false;
+        if (parentPlugin == null) {
+            return false;
+        } else {
+            return parentPlugin.isEnabled();
+        }
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String arg0, double arg1) {
-        // TODO Auto-generated method stub
+
+        switch (parentPlugin.getTransactionManager().takeMoney(arg0, Float.parseFloat(String.valueOf(arg1)))) {
+        case successful:
+
+            return new EconomyResponse(arg1, getBalance(arg0), ResponseType.SUCCESS, null);
+        case insufficientFunds:
+
+            return new EconomyResponse(arg1, getBalance(arg0), ResponseType.FAILURE, "insufficient funds");
+        default:
+            break;
+        }
+
         return null;
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String arg0, String arg1, double arg2) {
-        // TODO Auto-generated method stub
+      
+        switch (parentPlugin.getTransactionManager().takeMoney(arg0, Float.parseFloat(String.valueOf(arg2)))) {
+        case successful:
+
+            return new EconomyResponse(arg2, getBalance(arg0), ResponseType.SUCCESS, null);
+        case insufficientFunds:
+
+            return new EconomyResponse(arg2, getBalance(arg0), ResponseType.FAILURE, "insufficient funds");
+        default:
+            break;
+        }
+
         return null;
     }
 

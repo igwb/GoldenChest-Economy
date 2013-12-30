@@ -1,6 +1,7 @@
 package me.igwb.GoldenChest;
 import me.igwb.GoldenChest.ChestInteraction.ChestInteractor;
 import me.igwb.GoldenChest.Database.DatabaseConnector;
+import me.igwb.GoldenChest.Vault.VaultConnector;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -12,7 +13,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 
 
-public class Plugin extends JavaPlugin {
+public class GoldenChestEconomy extends JavaPlugin {
 
 
     private MyEventListener eventListener;
@@ -22,24 +23,21 @@ public class Plugin extends JavaPlugin {
     private ChestInteractor myChestInteractor;
     private GoldConverter myGoldConverter;
     private TransactionManager myTransactionManager;
+    private VaultConnector myVaultConnector;
 
     private LWC lwc;
 
     private static int CONFIG_VERSION = 0;
-    //TODO: Capitalize this
     private static Economy econ = null;
 
     @Override
     public void onEnable() {
 
-        //TODO: Fix vault integration
-
-        /*
         if (!setupEconomy()) {
             logSevere("Vault not found! - Disabeling GoldenChest-Economy");
             getServer().getPluginManager().disablePlugin(this);
             return;
-        }*/
+        }
 
         if (!setupLWC()) {
             logSevere("LWC not found! - Disabeling GoldenChest-Economy");
@@ -52,6 +50,8 @@ public class Plugin extends JavaPlugin {
         myChestInteractor = new ChestInteractor(this);
         myGoldConverter = new GoldConverter(Float.parseFloat(getFileConfig().getString("Economy-Settings.nuggetValue")));
         myTransactionManager = new TransactionManager(this);
+
+        myVaultConnector = new VaultConnector(this);
 
         eventListener = new MyEventListener(this);
         commandExecutor = new MyCommandExecutor(this);
@@ -72,17 +72,21 @@ public class Plugin extends JavaPlugin {
     }
 
     private boolean setupEconomy() {
+
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            logSevere("No vault!");
+            logMessage("no pl");
             return false;
         }
+        return true;
+/*
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (rsp == null) {
-            logSevere("No rsp!");
+            logMessage("no rsp");
             return false;
         }
+
         econ = rsp.getProvider();
-        return econ != null;
+        return econ != null;*/
     }
 
     private void registerEvents() {
@@ -101,7 +105,7 @@ public class Plugin extends JavaPlugin {
 
         getCommand("grant").setExecutor(commandExecutor);
         getCommand("take").setExecutor(commandExecutor);
-        
+
         getCommand("pay").setExecutor(commandExecutor);
     }
 
@@ -160,7 +164,12 @@ public class Plugin extends JavaPlugin {
     }
 
     public LWC getLwc() {
-        
+
         return lwc;
+    }
+
+    public VaultConnector getVaultConnector() {
+
+        return myVaultConnector;
     }
 }

@@ -7,12 +7,12 @@ import org.bukkit.inventory.ItemStack;
 import me.igwb.GoldenChest.GoldAmount;
 import me.igwb.GoldenChest.GoldTransactionResult;
 import me.igwb.GoldenChest.GoldTransactionResultType;
-import me.igwb.GoldenChest.Plugin;
+import me.igwb.GoldenChest.GoldenChestEconomy;
 
 public final class ChestInteractor {
 
-    private Plugin parentPlugin;
-    public ChestInteractor(Plugin parent) {
+    private GoldenChestEconomy parentPlugin;
+    public ChestInteractor(GoldenChestEconomy parent) {
 
         parentPlugin = parent;
     }
