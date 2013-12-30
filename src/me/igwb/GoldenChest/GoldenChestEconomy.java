@@ -28,16 +28,16 @@ public class GoldenChestEconomy extends JavaPlugin {
     private LWC lwc;
 
     private static int CONFIG_VERSION = 0;
-    private static Economy econ = null;
+ //   private static Economy econ = null;
 
     @Override
     public void onEnable() {
 
-        if (!setupEconomy()) {
+        /*if (!setupEconomy()) {
             logSevere("Vault not found! - Disabeling GoldenChest-Economy");
             getServer().getPluginManager().disablePlugin(this);
             return;
-        }
+        }*/
 
         if (!setupLWC()) {
             logSevere("LWC not found! - Disabeling GoldenChest-Economy");
@@ -70,7 +70,7 @@ public class GoldenChestEconomy extends JavaPlugin {
         lwc = ((LWCPlugin) lwcp).getLWC();
         return true;
     }
-
+/*
     private boolean setupEconomy() {
 
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -78,7 +78,7 @@ public class GoldenChestEconomy extends JavaPlugin {
             return false;
         }
         return true;
-/*
+
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (rsp == null) {
             logMessage("no rsp");
@@ -86,9 +86,9 @@ public class GoldenChestEconomy extends JavaPlugin {
         }
 
         econ = rsp.getProvider();
-        return econ != null;*/
+        return econ != null;
     }
-
+*/
     private void registerEvents() {
 
         getServer().getPluginManager().registerEvents(eventListener, this);
