@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
@@ -262,6 +263,8 @@ public class DatabaseConnector {
         }
     }
 
+
+
     public ArrayList<Location> getPlayersChests(String player) {
 
         ArrayList<Location> chestLocations = new ArrayList<Location>();
@@ -280,7 +283,29 @@ public class DatabaseConnector {
 
             while (rs.next()) {
                 currentLocation = new Location(parentPlugin.getServer().getWorld(rs.getString("World")), rs.getDouble("X"), rs.getDouble("Y"), rs.getDouble("Z"));
+
                 chestLocations.add(currentLocation);
+            }
+
+            if (st != null) {
+                st.close();
+            }
+            if (rs != null) {
+                rs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+
+            ArrayList<Location> locCopy = new ArrayList<Location>();
+            locCopy.addAll(chestLocations);
+            
+            for (Location location : locCopy) {
+                if (location.getBlock().getType() != Material.CHEST) {
+                    parentPlugin.logMessage("Invalid chest found. Removed from the database.");
+                    removeChest(location);
+                    chestLocations.remove(location);
+                }
             }
 
             return chestLocations;
@@ -304,8 +329,35 @@ public class DatabaseConnector {
         }
     }
 
-    public void removeChest(String owner, Location chestLocation) {
+    public Boolean removeChest(Location chestLocation) {
+        Connection con = null;
+        Statement st = null;
 
+
+        try {
+
+            con = getConnection();
+            st = con.createStatement();
+
+            st.executeUpdate("DELETE FROM Chests WHERE World=\'" + chestLocation.getWorld().getName() + "\' AND X=\'" + chestLocation.getBlockX() + "\' AND Y=\'" + chestLocation.getBlockY() + "\' AND Z=\'" + chestLocation.getBlockZ() + "\';");
+ 
+            return false;
+
+        } catch (SQLException e) {
+            parentPlugin.logSevere(e.getMessage());
+            return false;
+        } finally {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                parentPlugin.logSevere(e.getMessage());
+            }
+        }
     }
 
 }

@@ -21,19 +21,44 @@ public class MyCommandExecutor implements CommandExecutor {
 
         switch (arg1.getName().toLowerCase()) {
         case "registerchest":
-            return registerChest(arg0);
-        case "pay":
-            return pay(arg0, arg3);
-        case "money": case "balance": case "bal":
-            if (arg3 == null || arg3.length < 1) {
-                return balance(arg0, null);
+            if (arg0.hasPermission("GoldenChest.registerChest")) {
+                return registerChest(arg0);
             } else {
-                return balance(arg0, arg3[0]);
+                arg0.sendMessage("Insufficient permissions!");
+                return true;
+            }
+        case "pay":
+            if (arg0.hasPermission("GoldenChest.pay")) {
+                return pay(arg0, arg3);
+            } else {
+                arg0.sendMessage("Insufficient permissions!");
+                return true;
+            }
+        case "money": case "balance": case "bal":
+            if (arg0.hasPermission("GoldenChest.money")) {
+                if (arg3 == null || arg3.length < 1) {
+                    return balance(arg0, null);
+                } else {
+                    return balance(arg0, arg3[0]);
+                }
+            } else {
+                arg0.sendMessage("Insufficient permissions!");
+                return true;
             }
         case "grant":
-            return grant(arg0, arg3);
+            if (arg0.hasPermission("GoldenChest.grant")) {
+                return grant(arg0, arg3);
+            } else {
+                arg0.sendMessage("Insufficient permissions!");
+                return true;
+            }
         case "take":
-            return take(arg0, arg3);
+            if (arg0.hasPermission("GoldenChest.take")) {
+                return take(arg0, arg3);
+            } else {
+                arg0.sendMessage("Insufficient permissions!");
+                return true;
+            }
         default:
             break;
         }
@@ -81,8 +106,6 @@ public class MyCommandExecutor implements CommandExecutor {
                                     parentPlugin.getTransactionManager().giveMoney(args[0], Float.parseFloat(args[1]));
                                     sender.sendMessage("You've payed " + args[1] + " to " + args[0]);
                                 }
-
-
                             } else {
                                 sender.sendMessage("You do not have enough money!");
                             }

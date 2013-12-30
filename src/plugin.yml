@@ -1,6 +1,6 @@
 name: GoldenChestEconomy
 main: me.igwb.GoldenChest.GoldenChestEconomy
-version: 0.1
+version: 1.0
 depend: [LWC, Vault]
 commands:
    money:

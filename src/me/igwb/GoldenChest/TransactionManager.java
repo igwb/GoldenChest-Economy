@@ -6,6 +6,7 @@ import me.igwb.GoldenChest.ChestInteraction.ChestChecker;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
+import org.bukkit.entity.Player;
 
 public class TransactionManager {
 
@@ -22,11 +23,16 @@ public class TransactionManager {
         ArrayList<Location> chests = parentPlugin.getDbConnector().getPlayersChests(player);
 
 
+        //Notify the recipient
+        if (parentPlugin.getFileConfig().getBoolean("Payments.notifyOnOutgoing")) {
+            if (parentPlugin.getServer().getPlayer(player) != null && parentPlugin.getServer().getPlayer(player) instanceof Player) {
+                parentPlugin.getServer().getPlayer(player).sendMessage(amount + " has been substracted from your account.");
+            }
+        }
+
         //Check if the overflow amount is sufficient for this transaction
         if (parentPlugin.getDbConnector().getOveflowAmount(player) >= amount) {
             parentPlugin.getDbConnector().setOverflowAmount(player, parentPlugin.getDbConnector().getOveflowAmount(player) - amount);
-
-
 
             return TransactionResult.successful;
         } else {
@@ -70,6 +76,14 @@ public class TransactionManager {
 
     public void giveMoney(String player, float amount) {
         ArrayList<Location> chests = parentPlugin.getDbConnector().getPlayersChests(player);
+
+
+        //Notify the recipient
+        if (parentPlugin.getFileConfig().getBoolean("Payments.notifyOnIncoming")) {
+            if (parentPlugin.getServer().getPlayer(player) != null && parentPlugin.getServer().getPlayer(player) instanceof Player) {
+                parentPlugin.getServer().getPlayer(player).sendMessage(amount + " has been added to your account.");
+            }
+        }
 
         //Load the players overflow amount and try to deposit it...
         amount += parentPlugin.getDbConnector().getOveflowAmount(player);

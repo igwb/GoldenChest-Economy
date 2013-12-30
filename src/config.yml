@@ -18,13 +18,8 @@ Payments:
    enablePayCommand: true
 #Will players revieve a message when they loose or get money?
 #The message will be sent regardles of what trigered the transaction.
-   notifyOnIncomming: false
+   notifyOnIncoming: false
    notifyOnOutgoing: false
-
-Permissions:
-#Players with OP-Status have all permissions for this plugin. Not recommended.
-   opHasAllPermissions: false
-
 
 ###################################
 #       Developer options         #
