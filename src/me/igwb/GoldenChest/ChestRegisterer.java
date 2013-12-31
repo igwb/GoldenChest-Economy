@@ -43,23 +43,33 @@ public class ChestRegisterer implements Listener {
         if (playersRegistering.contains(e.getPlayer().getName())) {
             if (e.getInventory().getHolder() instanceof Chest) {
 
-                //Check the chest with LWC
-                loc1 = ((Chest) e.getInventory().getHolder()).getLocation();
-                prot = parentPlugin.getLwc().findProtection(loc1.getBlock());
+                //Check if the player is in a world where he can register chests.
+                if (!parentPlugin.getFileConfig().getList("Worlds").contains(e.getPlayer().getLocation().getWorld().getName())) {
+                    ((Player) e.getPlayer()).sendMessage("Chests can not be registered in this world!");
+                    return;
+                }
 
-                if (prot != null) {
-                    if (prot.getOwner().equals(e.getPlayer().getName())) {
-                        if (prot.getType() != Type.PRIVATE) {
-                            ((Player) e.getPlayer()).sendMessage("Warning! The chest you're trying to register is not private!");
+                //Get the chests location.
+                loc1 = ((Chest) e.getInventory().getHolder()).getLocation();
+
+                //Check the chest with LWC if enabled
+                if (parentPlugin.getLwc() != null) {
+                    prot = parentPlugin.getLwc().findProtection(loc1.getBlock());
+
+                    if (prot != null) {
+                        if (prot.getOwner().equals(e.getPlayer().getName())) {
+                            if (prot.getType() != Type.PRIVATE) {
+                                ((Player) e.getPlayer()).sendMessage("Warning! The chest you're trying to register is not private!");
+                                return;
+                            }
+                        } else {
+                            ((Player) e.getPlayer()).sendMessage("You do not own this chest!");
                             return;
                         }
                     } else {
-                        ((Player) e.getPlayer()).sendMessage("You do not own this chest!");
+                        ((Player) e.getPlayer()).sendMessage("You can not register an unprotected chest!");
                         return;
                     }
-                } else {
-                    ((Player) e.getPlayer()).sendMessage("You can not register an unprotected chest!");
-                    return;
                 }
 
                 //Register the chest
@@ -80,43 +90,53 @@ public class ChestRegisterer implements Listener {
                 }
             } else if (e.getInventory().getHolder() instanceof DoubleChest) {
 
+                //Check if the player is in a world where he can register chests.
+                if (!parentPlugin.getFileConfig().getList("Worlds").contains(e.getPlayer().getLocation().getWorld().getName())) {
+                    ((Player) e.getPlayer()).sendMessage("Chests can not be registered in this world!");
+                    return;
+                }
+
                 //Get the chest locations
                 loc1 = ((Chest) ((DoubleChest) e.getInventory().getHolder()).getLeftSide()).getLocation();
                 loc2 = ((Chest) ((DoubleChest) e.getInventory().getHolder()).getRightSide()).getLocation();
 
-                //Check protection 1 with LWC
-                prot = parentPlugin.getLwc().findProtection(loc1.getBlock());
+                //Check with LWC if enabled
+                if (parentPlugin.getLwc() != null) {
+                    //Check protection 1 with LWC
+                    prot = parentPlugin.getLwc().findProtection(loc1.getBlock());
 
-                if (prot != null) {
-                    if (prot.getOwner().equals(e.getPlayer().getName())) {
-                        if (prot.getType() != Type.PRIVATE && parentPlugin.getFileConfig().getBoolean("Chests.privateOnly")) {
-                            ((Player) e.getPlayer()).sendMessage("Only private chests can be registered!");
+                    if (prot != null) {
+                        if (prot.getOwner().equals(e.getPlayer().getName())) {
+                            if (prot.getType() != Type.PRIVATE) {
+                                ((Player) e.getPlayer()).sendMessage("Warning! The chest you're trying to register is not private!");
+                                return;
+                            }
+                        } else {
+                            ((Player) e.getPlayer()).sendMessage("You do not own this chest!");
                             return;
                         }
                     } else {
-                        ((Player) e.getPlayer()).sendMessage("You do not own this chest!");
+                        ((Player) e.getPlayer()).sendMessage("You can not register an unprotected chest!");
                         return;
                     }
-                } else {
-                    ((Player) e.getPlayer()).sendMessage("You can not register an unprotected chest!");
-                    return;
-                }
 
-                //Check protection 2 with LWC
-                prot = parentPlugin.getLwc().findProtection(loc2.getBlock());
+                    //Check protection 2 with LWC
+                    prot = parentPlugin.getLwc().findProtection(loc2.getBlock());
 
-                if (prot != null) {
-                    if (prot.getOwner().equals(e.getPlayer().getName())) {
-                        if (prot.getType() != Type.PRIVATE) {
-                            ((Player) e.getPlayer()).sendMessage("Warning! The chest you're trying to register is not private!");
+                    if (prot != null) {
+                        if (prot.getOwner().equals(e.getPlayer().getName())) {
+                            if (prot.getType() != Type.PRIVATE) {
+                                ((Player) e.getPlayer()).sendMessage("Warning! The chest you're trying to register is not private!");
+                                return;
+                            }
+                        } else {
+                            ((Player) e.getPlayer()).sendMessage("You do not own this chest!");
+                            return;
                         }
                     } else {
-                        ((Player) e.getPlayer()).sendMessage("You do not own this chest!");
+                        ((Player) e.getPlayer()).sendMessage("You can not register an unprotected chest!");
                         return;
                     }
-                } else {
-                    ((Player) e.getPlayer()).sendMessage("You can not register an unprotected chest!");
-                    return;
                 }
 
                 //Try to register the first chest

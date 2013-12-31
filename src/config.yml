@@ -3,27 +3,44 @@
 ###################################
 
 
-Economy-Settings:
+#nuggetValue:  1.0 (default)
 #How much is a gold nugget worth. Accepts decimal places. Must be bigger than 0
 #Changing the nugget value after the plugin has been in use may lead to unexpected results.
+Economy-Settings:
    nuggetValue: 1.0
 
-Chests:
+#Worlds in which a chests can be registered as a "wallet"
+#This is mainly meant for servers that have a creative-mode world.
+Worlds:
+ - world
+ 
+#maximumAllowed: 2 (default)
 #How many chests is one player allowed to register as  his "wallet".
 #Two should be enough. For a nugget value of 1 a double chest can hold up to 279936 currency.
+#useLWC: true(default)
+#Only chests a players owns can be registered as a "wallet"
+Chests:
    maximumAllowed: 2
+   useLWC: true
 
-Payments:
+#enablePayCommand: true (default)
 #Will players be able to use /pay ?
-   enablePayCommand: true
-#Will players revieve a message when they loose or get money?
+#canUseWithoutWallet: false (default)
+#Can a player get money with /pay if he does not have any chests registred. Not recommended.
+#This also means that players that never joined the server can recieve money.
+#notifyOnIncoming: false(default)
+#Will players revieve a message when they get money?
 #The message will be sent regardles of what trigered the transaction.
+#notifyOnOutgoing: false(default)
+#Will players revieve a message when they loose money?
+#The message will be sent regardles of what trigered the transaction.
+Payments:
+   enablePayCommand: true
+   canUseWithoutWallet: false
    notifyOnIncoming: false
    notifyOnOutgoing: false
 
-###################################
-#       Developer options         #
-###################################
+#Debug output
 Debug: false
 #Please do not modify the version number. The plugin will break.
 Version: 0

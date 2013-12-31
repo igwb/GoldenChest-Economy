@@ -1,4 +1,6 @@
 package me.igwb.GoldenChest;
+import java.util.logging.Level;
+
 import me.igwb.GoldenChest.ChestInteraction.ChestInteractor;
 import me.igwb.GoldenChest.Database.DatabaseConnector;
 import me.igwb.GoldenChest.Vault.VaultConnector;
@@ -25,24 +27,19 @@ public class GoldenChestEconomy extends JavaPlugin {
     private TransactionManager myTransactionManager;
     private VaultConnector myVaultConnector;
 
-    private LWC lwc;
+    private LWC lwc = null;
 
     private static int CONFIG_VERSION = 0;
- //   private static Economy econ = null;
 
     @Override
     public void onEnable() {
 
-        /*if (!setupEconomy()) {
-            logSevere("Vault not found! - Disabeling GoldenChest-Economy");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }*/
 
-        if (!setupLWC()) {
-            logSevere("LWC not found! - Disabeling GoldenChest-Economy");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
+        if (getFileConfig().getBoolean("Chests.useLWC")) {
+            if (!setupLWC()) {
+                this.getLogger().log(Level.WARNING, "LWC not found! - Please disable the useLWC flag in the config or install LWC");
+                lwc = null;
+            }
         }
 
         dbConnector = new DatabaseConnector(this);
@@ -62,7 +59,6 @@ public class GoldenChestEconomy extends JavaPlugin {
 
     private boolean setupLWC() {
         if (getServer().getPluginManager().getPlugin("LWC") == null) {
-            logSevere("No LWC found!");
             return false;
         }
 
@@ -70,25 +66,7 @@ public class GoldenChestEconomy extends JavaPlugin {
         lwc = ((LWCPlugin) lwcp).getLWC();
         return true;
     }
-/*
-    private boolean setupEconomy() {
 
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            logMessage("no pl");
-            return false;
-        }
-        return true;
-
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (rsp == null) {
-            logMessage("no rsp");
-            return false;
-        }
-
-        econ = rsp.getProvider();
-        return econ != null;
-    }
-*/
     private void registerEvents() {
 
         getServer().getPluginManager().registerEvents(eventListener, this);

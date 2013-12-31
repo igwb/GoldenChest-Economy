@@ -1,7 +1,7 @@
 name: GoldenChestEconomy
 main: me.igwb.GoldenChest.GoldenChestEconomy
 version: 1.0
-depend: [LWC]
+soft-depend: [LWC]
 commands:
    money:
       description: Check how much money someone has.

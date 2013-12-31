@@ -85,17 +85,18 @@ public class DatabaseConnector {
         }
     }
 
-
     public DBAddResult addPlayer(String name) {
         Connection con = null;
         Statement st = null;
         ResultSet rs = null;
 
         try {
+            
+            //Convert name to lowercase.
+            name = name.toLowerCase();
+            
             con = getConnection();
-
             st = con.createStatement();
-
             rs = st.executeQuery("SELECT * FROM Players WHERE Name= \'" + name + "\';");
 
             //Check if the player is already in the database
@@ -134,10 +135,12 @@ public class DatabaseConnector {
         ResultSet rs = null;
 
         try {
+            
+            //Convert name to lowercase.
+            player = player.toLowerCase();
+            
             con = getConnection();
-
             st = con.createStatement();
-
             rs = st.executeQuery("SELECT OverflowAmount FROM Players WHERE Name= \'" + player + "\';");
 
             //Check if the player is in the database
@@ -174,10 +177,12 @@ public class DatabaseConnector {
         ResultSet rs = null;
 
         try {
+            
+            //Convert name to lowercase.
+            player = player.toLowerCase();
+            
             con = getConnection();
-
             st = con.createStatement();
-
             rs = st.executeQuery("SELECT OverflowAmount FROM Players WHERE Name= \'" + player + "\';");
 
             //Check if the player is in the database
@@ -217,6 +222,10 @@ public class DatabaseConnector {
         ResultSet rs = null;
 
         try {
+            
+            //Convert name to lowercase.
+            owner = owner.toLowerCase();
+            
             con = getConnection();
             st = con.createStatement();
 
@@ -263,8 +272,6 @@ public class DatabaseConnector {
         }
     }
 
-
-
     public ArrayList<Location> getPlayersChests(String player) {
 
         ArrayList<Location> chestLocations = new ArrayList<Location>();
@@ -274,6 +281,9 @@ public class DatabaseConnector {
 
         try {
 
+            //Convert name to lowercase.
+            player = player.toLowerCase();
+            
             Location currentLocation;
 
             con = getConnection();

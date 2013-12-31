@@ -69,16 +69,23 @@ public class MyCommandExecutor implements CommandExecutor {
     private boolean registerChest(CommandSender sender) {
 
         if (sender instanceof Player) {
-            if (parentPlugin.getDbConnector().getPlayersChests(sender.getName()).size() < parentPlugin.getFileConfig().getInt("Chests.maximumAllowed")) {
-                sender.sendMessage("Open a chest to register it.");
-                parentPlugin.getChestRegisterer().startsRegistering((Player) sender);
+
+            //Check if the player is in a world where he can register a chest.
+            if (parentPlugin.getFileConfig().getList("Worlds").contains(((Player) sender).getLocation().getWorld().getName())) {
+
+                //Check if the player is allowed to register more chests.
+                if (parentPlugin.getDbConnector().getPlayersChests(sender.getName()).size() < parentPlugin.getFileConfig().getInt("Chests.maximumAllowed")) {
+                    sender.sendMessage("Open a chest to register it.");
+                    parentPlugin.getChestRegisterer().startsRegistering((Player) sender);
+                } else {
+                    sender.sendMessage("You are not allowed to register another chest.");
+                }
             } else {
-                sender.sendMessage("You are not allowed to register another chest.");
+                sender.sendMessage("Chests can not be registered in this world!");
             }
         } else {
             sender.sendMessage("This command can only be run by a player!");
         }
-
 
         return true;
     }
@@ -95,8 +102,8 @@ public class MyCommandExecutor implements CommandExecutor {
                     //Check if the argument count is correct
                     if (args != null && args.length == 2) {
 
-                        //Check if the player has an account
-                        if (parentPlugin.getDbConnector().getPlayersChests(args[0]).size() > 0) {
+                        //Check if the player has an account, ignore if disabled in the config.
+                        if (!parentPlugin.getFileConfig().getBoolean("Payments.canUseWithoutWallet") && parentPlugin.getDbConnector().getPlayersChests(args[0]).size() > 0) {
 
                             //Check if the player has enough money.
                             if (parentPlugin.getTransactionManager().getBalance(((Player) sender).getName()) >= Float.parseFloat(args[1])) {
@@ -143,12 +150,21 @@ public class MyCommandExecutor implements CommandExecutor {
 
         if (player == null) {
 
-            balance = parentPlugin.getTransactionManager().getBalance(sender.getName());
-            sender.sendMessage("Your current balance is: " + balance + ".");
+            //Check if the player has any chests registered
+            if (parentPlugin.getDbConnector().getPlayersChests(sender.getName()).size() > 0) {
+                balance = parentPlugin.getTransactionManager().getBalance(sender.getName());
+                sender.sendMessage("Your current balance is: " + balance + ".");
+            } else {
+                sender.sendMessage("You do not have any chests registered!");
+                sender.sendMessage("To register a chest type /registerChest and open it.");
+            }
         } else {
-
-            balance = parentPlugin.getTransactionManager().getBalance(player);
-            sender.sendMessage(player + " currently has " + balance + ".");
+            if (parentPlugin.getDbConnector().getPlayersChests(sender.getName()).size() > 0) {
+                balance = parentPlugin.getTransactionManager().getBalance(player);
+                sender.sendMessage(player + " currently has " + balance + ".");
+            } else {
+                sender.sendMessage(player + " Does not have any chests registered!");
+            }
         }
 
 
