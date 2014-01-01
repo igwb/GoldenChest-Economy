@@ -208,11 +208,11 @@ public class MyCommandExecutor implements CommandExecutor {
                 sender.sendMessage("To register a chest type /registerChest and open it.");
             }
         } else {
-            if (parentPlugin.getDbConnector().getPlayersChests(sender.getName()).size() > 0) {
+            if (parentPlugin.getDbConnector().getPlayersChests(player).size() > 0) {
                 balance = parentPlugin.getTransactionManager().getBalance(player);
                 sender.sendMessage(player + " currently has " + balance + ".");
             } else {
-                sender.sendMessage(player + " Does not have any chests registered!");
+                sender.sendMessage(player + " does not have any chests registered!");
             }
         }
 
