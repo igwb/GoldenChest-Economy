@@ -1,5 +1,7 @@
 package me.igwb.GoldenChest;
 
+import java.util.ArrayList;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -59,12 +61,59 @@ public class MyCommandExecutor implements CommandExecutor {
                 arg0.sendMessage("Insufficient permissions!");
                 return true;
             }
+        case "top":
+            if (arg0.hasPermission("GoldenChest.top")) {
+                return top(arg0, arg3);
+            } else {
+                arg0.sendMessage("Insufficient permissions!");
+                return true;
+            }
         default:
             break;
         }
         return false;
     }
 
+    private boolean top(CommandSender sender, String[] args) {
+        try {
+            int page;
+            int entriesPerPage = 5;
+
+            ArrayList<String> topList;
+
+            if (args != null && args.length <= 1) {
+
+                if (args.length == 1) {
+                    page = Integer.parseInt(args[0]);
+                } else {
+                    page = 1;
+                }
+                page = Math.max(0, page - 1);
+
+                topList = parentPlugin.getDbConnector().getTopList();
+
+                if (topList != null) {
+                    for (int i = page * entriesPerPage; i < Math.min(topList.size(), (page * entriesPerPage) + entriesPerPage); i++) {
+                        sender.sendMessage(topList.get(i));
+                    }
+                }
+
+            } else {
+                sender.sendMessage("This command accepts a maximum of one argument!");
+                sender.sendMessage("/top [page]");
+            }
+            return true;
+        } catch (NumberFormatException e) {
+            sender.sendMessage("Page must be a number!");
+            sender.sendMessage("/top [page]");
+            return true;
+        } catch (Exception e) {
+            sender.sendMessage("Invalid argument!");
+            sender.sendMessage("/top [page]");
+            e.printStackTrace();
+            return true;
+        }
+    }
 
     private boolean registerChest(CommandSender sender) {
 

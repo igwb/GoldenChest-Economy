@@ -32,7 +32,6 @@ public class GoldenChestEconomy extends JavaPlugin {
     @Override
     public void onEnable() {
 
-
         if (getFileConfig().getBoolean("Chests.useLWC")) {
             if (!setupLWC()) {
                 this.getLogger().log(Level.WARNING, "LWC not found! - Please disable the useLWC flag in the config or install LWC");
@@ -83,6 +82,8 @@ public class GoldenChestEconomy extends JavaPlugin {
         getCommand("take").setExecutor(commandExecutor);
 
         getCommand("pay").setExecutor(commandExecutor);
+        
+        getCommand("top").setExecutor(commandExecutor);
     }
 
     public void logMessage(final String message) {

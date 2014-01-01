@@ -11,7 +11,9 @@ import org.bukkit.Material;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
-
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Hashtable;
 import me.igwb.GoldenChest.GoldenChestEconomy;
 
 public class DatabaseConnector {
@@ -91,10 +93,10 @@ public class DatabaseConnector {
         ResultSet rs = null;
 
         try {
-            
+
             //Convert name to lowercase.
             name = name.toLowerCase();
-            
+
             con = getConnection();
             st = con.createStatement();
             rs = st.executeQuery("SELECT * FROM Players WHERE Name= \'" + name + "\';");
@@ -135,10 +137,10 @@ public class DatabaseConnector {
         ResultSet rs = null;
 
         try {
-            
+
             //Convert name to lowercase.
             player = player.toLowerCase();
-            
+
             con = getConnection();
             st = con.createStatement();
             rs = st.executeQuery("SELECT OverflowAmount FROM Players WHERE Name= \'" + player + "\';");
@@ -177,10 +179,10 @@ public class DatabaseConnector {
         ResultSet rs = null;
 
         try {
-            
+
             //Convert name to lowercase.
             player = player.toLowerCase();
-            
+
             con = getConnection();
             st = con.createStatement();
             rs = st.executeQuery("SELECT OverflowAmount FROM Players WHERE Name= \'" + player + "\';");
@@ -222,10 +224,10 @@ public class DatabaseConnector {
         ResultSet rs = null;
 
         try {
-            
+
             //Convert name to lowercase.
             owner = owner.toLowerCase();
-            
+
             con = getConnection();
             st = con.createStatement();
 
@@ -283,7 +285,7 @@ public class DatabaseConnector {
 
             //Convert name to lowercase.
             player = player.toLowerCase();
-            
+
             Location currentLocation;
 
             con = getConnection();
@@ -309,7 +311,7 @@ public class DatabaseConnector {
 
             ArrayList<Location> locCopy = new ArrayList<Location>();
             locCopy.addAll(chestLocations);
-            
+
             for (Location location : locCopy) {
                 if (location.getBlock().getType() != Material.CHEST) {
                     parentPlugin.logMessage("Invalid chest found. Removed from the database.");
@@ -350,7 +352,7 @@ public class DatabaseConnector {
             st = con.createStatement();
 
             st.executeUpdate("DELETE FROM Chests WHERE World=\'" + chestLocation.getWorld().getName() + "\' AND X=\'" + chestLocation.getBlockX() + "\' AND Y=\'" + chestLocation.getBlockY() + "\' AND Z=\'" + chestLocation.getBlockZ() + "\';");
- 
+
             return false;
 
         } catch (SQLException e) {
@@ -368,6 +370,96 @@ public class DatabaseConnector {
                 parentPlugin.logSevere(e.getMessage());
             }
         }
+    }
+
+    public ArrayList<String> getTopList() {
+
+
+        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> players = new ArrayList<String>();
+        ArrayList<Float> balances = new ArrayList<Float>();
+        Hashtable<Float, ArrayList<String>> hash = new Hashtable<Float, ArrayList<String>>();
+
+        Connection con = null;
+        Statement st = null;
+        ResultSet rs = null;
+
+        try {
+
+            con = getConnection();
+            st = con.createStatement();
+
+            rs = st.executeQuery("SELECT Name from Players;");
+
+            Float current;
+
+            ArrayList<String> playerValuePairs = new ArrayList<String>(), temp;
+            while (rs.next()) {
+                current = parentPlugin.getTransactionManager().getBalance(rs.getString("Name"));
+
+                if (!balances.contains(current)) {
+                    balances.add(current);
+                }
+                players.add(rs.getString("Name"));
+
+                playerValuePairs.clear();
+                if (hash.get(current) == null) {
+                    playerValuePairs.add(rs.getString("Name"));
+
+                    temp = new ArrayList<String>();
+                    temp.addAll(playerValuePairs);
+                    hash.put(current, temp);
+
+                } else {
+                    playerValuePairs = hash.get(current);
+                    hash.remove(current);
+                    playerValuePairs.add(rs.getString("Name"));
+
+                    temp = new ArrayList<String>();
+                    temp.addAll(playerValuePairs);
+                    hash.put(current, temp);
+                }
+            }
+
+            //Sort the balances
+            Comparator<Float> c = new Comparator<Float>() {
+                @Override
+                public int compare(Float arg0, Float arg1) {
+                    return arg1.compareTo(arg0);
+                }
+            };
+            Collections.sort(balances, c);
+
+            Integer rank = 1;
+            //Write the results;
+            for (Float bal : balances) {
+                for (String str : hash.get(bal)) {
+                    result.add("#" + rank + ". " + str + " " + bal);
+                    rank++;
+                }
+            }
+
+            return result;
+        } catch (SQLException e) {
+            parentPlugin.logSevere(e.getMessage());
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                parentPlugin.logSevere(e.getMessage());
+                e.printStackTrace();
+            }
+        }  
     }
 
 }
