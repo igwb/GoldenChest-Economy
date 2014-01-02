@@ -6,40 +6,40 @@ commands:
    money:
       description: Check how much money someone has.
       usage: /money [player]
-      permission: GoldenChest.money
+      permission: GoldenChestEconomy.use.money
       permission-message: You don't have permission to use that command!
    balance:
       description: Check how much money someone has.
       usage: /money [player]
-      permission: GoldenChest.money
+      permission: GoldenChestEconomy.use.money
       permission-message: You don't have permission to use that command!
    bal:
       description: Check how much money someone has.
       usage: /money [player]
-      permission: GoldenChest.money
-      permission-message: You don't have permission to use that command!
-   grant:
-      description: Gives a player the specified of money.
-      usage: /grant [player] [amount]
-      permission: GoldenChest.grant
-      permission-message: You don't have permission to use that command!
-   take:
-      description: Takes a specified amount of money from a player.
-      usage: /take [player] [amount]
-      permission: GoldenChest.take
+      permission: GoldenChestEconomy.use.money
       permission-message: You don't have permission to use that command!
    pay:
       description: Pays money to a player.
       usage: /pay [player] [amount]
-      permission: GoldenChest.pay
+      permission: GoldenChestEconomy.use.pay
       permission-message: You don't have permission to use that command!
    registerChest:
       description: Registers a chest.
       usage: /registerChest
-      permission: GoldenChest.registerChest
+      permission: GoldenChestEconomy.use.registerChest
       permission-message: You don't have permission to use that command!
    top:
       description: Lists all accounts in a list ordered by their balance.
       usage: /top [page]
-      permission: GoldenChest.top
+      permission: GoldenChestEconomy.use.top
+      permission-message: You don't have permission to use that command!
+   grant:
+      description: Gives a player the specified of money.
+      usage: /grant [player] [amount]
+      permission: GoldenChestEconomy.admin.grant
+      permission-message: You don't have permission to use that command!
+   take:
+      description: Takes a specified amount of money from a player.
+      usage: /take [player] [amount]
+      permission: GoldenChestEconomy.admin.take
       permission-message: You don't have permission to use that command!

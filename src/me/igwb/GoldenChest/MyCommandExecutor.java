@@ -23,49 +23,49 @@ public class MyCommandExecutor implements CommandExecutor {
 
         switch (arg1.getName().toLowerCase()) {
         case "registerchest":
-            if (arg0.hasPermission("GoldenChest.registerChest")) {
+            if (arg0.hasPermission(parentPlugin.getCommand("registerChest").getPermission())) {
                 return registerChest(arg0);
             } else {
-                arg0.sendMessage("Insufficient permissions!");
+                arg0.sendMessage(parentPlugin.getCommand("registerChest").getPermissionMessage());
                 return true;
             }
         case "pay":
-            if (arg0.hasPermission("GoldenChest.pay")) {
+            if (arg0.hasPermission(parentPlugin.getCommand("pay").getPermission())) {
                 return pay(arg0, arg3);
             } else {
-                arg0.sendMessage("Insufficient permissions!");
+                arg0.sendMessage(parentPlugin.getCommand("pay").getPermissionMessage());
                 return true;
             }
         case "money": case "balance": case "bal":
-            if (arg0.hasPermission("GoldenChest.money")) {
+            if (arg0.hasPermission(parentPlugin.getCommand("money").getPermission())) {
                 if (arg3 == null || arg3.length < 1) {
                     return balance(arg0, null);
                 } else {
                     return balance(arg0, arg3[0]);
                 }
             } else {
-                arg0.sendMessage("Insufficient permissions!");
+                arg0.sendMessage(parentPlugin.getCommand("money").getPermissionMessage());
                 return true;
             }
         case "grant":
-            if (arg0.hasPermission("GoldenChest.grant")) {
+            if (arg0.hasPermission(parentPlugin.getCommand("grant").getPermission())) {
                 return grant(arg0, arg3);
             } else {
-                arg0.sendMessage("Insufficient permissions!");
+                arg0.sendMessage(parentPlugin.getCommand("grant").getPermissionMessage());
                 return true;
             }
         case "take":
-            if (arg0.hasPermission("GoldenChest.take")) {
+            if (arg0.hasPermission(parentPlugin.getCommand("take").getPermission())) {
                 return take(arg0, arg3);
             } else {
-                arg0.sendMessage("Insufficient permissions!");
+                arg0.sendMessage(parentPlugin.getCommand("take").getPermissionMessage());
                 return true;
             }
         case "top":
-            if (arg0.hasPermission("GoldenChest.top")) {
+            if (arg0.hasPermission(parentPlugin.getCommand("top").getPermission())) {
                 return top(arg0, arg3);
             } else {
-                arg0.sendMessage("Insufficient permissions!");
+                arg0.sendMessage(parentPlugin.getCommand("top").getPermissionMessage());
                 return true;
             }
         default:

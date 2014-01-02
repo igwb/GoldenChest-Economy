@@ -53,7 +53,7 @@ public class GoldenChestEconomy extends JavaPlugin {
 
         registerEvents();
         registerCommands();
-        
+
         try {
             Metrics metrics = new Metrics(this);
             if (metrics.start()) {
@@ -64,7 +64,7 @@ public class GoldenChestEconomy extends JavaPlugin {
         } catch (IOException e) {
             logMessage("Could not submit stats to mcstats.org");
         }
-        
+
     }
 
     private boolean setupLWC() {
@@ -95,7 +95,7 @@ public class GoldenChestEconomy extends JavaPlugin {
         getCommand("take").setExecutor(commandExecutor);
 
         getCommand("pay").setExecutor(commandExecutor);
-        
+
         getCommand("top").setExecutor(commandExecutor);
     }
 
