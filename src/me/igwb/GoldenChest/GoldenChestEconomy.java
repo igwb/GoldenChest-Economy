@@ -1,4 +1,5 @@
 package me.igwb.GoldenChest;
+import java.io.IOException;
 import java.util.logging.Level;
 
 import me.igwb.GoldenChest.ChestInteraction.ChestInteractor;
@@ -52,6 +53,18 @@ public class GoldenChestEconomy extends JavaPlugin {
 
         registerEvents();
         registerCommands();
+        
+        try {
+            Metrics metrics = new Metrics(this);
+            if (metrics.start()) {
+                logMessage("Now submitting data to http://mcstats.org for " + this.getDescription().getName());
+            } else {
+                logMessage("No data is beeing submitted to http://mcstats.org");
+            }
+        } catch (IOException e) {
+            logMessage("Could not submit stats to mcstats.org");
+        }
+        
     }
 
     private boolean setupLWC() {
