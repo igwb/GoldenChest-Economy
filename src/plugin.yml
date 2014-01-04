@@ -1,7 +1,7 @@
 name: GoldenChestEconomy
 main: me.igwb.GoldenChest.GoldenChestEconomy
 version: 1.0
-soft-depend: [LWC]
+soft-depend: [LWC, Vault]
 commands:
    money:
       description: Check how much money someone has.
@@ -34,7 +34,7 @@ commands:
       permission: GoldenChestEconomy.use.top
       permission-message: You don't have permission to use that command!
    grant:
-      description: Gives a player the specified of money.
+      description: Gives a player the specified amount of money.
       usage: /grant [player] [amount]
       permission: GoldenChestEconomy.admin.grant
       permission-message: You don't have permission to use that command!

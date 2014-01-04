@@ -225,8 +225,6 @@ public class MyCommandExecutor implements CommandExecutor {
         try {
             if (arg3 != null && arg3.length == 2) {
 
-                parentPlugin.getTransactionManager().storeOverflowToChest(arg3[0]);
-
                 parentPlugin.getTransactionManager().giveMoney(arg3[0], Float.parseFloat(arg3[1]));
                 sender.sendMessage(arg3[0] + " was granted " + arg3[1] + ".");
                 sender.sendMessage(parentPlugin.getGoldConverter().convertMoneyToGold(Float.parseFloat(arg3[1])).toString());
@@ -253,8 +251,6 @@ public class MyCommandExecutor implements CommandExecutor {
             TransactionResult result;
 
             if (arg3 != null && arg3.length == 2) {
-
-                parentPlugin.getTransactionManager().storeOverflowToChest(arg3[0]);
 
                 result = parentPlugin.getTransactionManager().takeMoney(arg3[0], Float.parseFloat(arg3[1]));
 

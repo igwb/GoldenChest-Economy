@@ -32,10 +32,20 @@ public class TransactionManager {
 
         //Check if the overflow amount is sufficient for this transaction
         if (parentPlugin.getDbConnector().getOveflowAmount(player) >= amount) {
+
+            if (parentPlugin.getFileConfig().getBoolean("Debug")) {
+                parentPlugin.logMessage("Taking " + amount + " from " + player + "'s overflow " + parentPlugin.getDbConnector().getOveflowAmount(player));
+            }
+
             parentPlugin.getDbConnector().setOverflowAmount(player, parentPlugin.getDbConnector().getOveflowAmount(player) - amount);
 
             return TransactionResult.successful;
         } else {
+
+            if (parentPlugin.getFileConfig().getBoolean("Debug")) {
+                parentPlugin.logMessage("Can not take " + amount + " from " + player + "'s overflow " + parentPlugin.getDbConnector().getOveflowAmount(player));
+            }
+
             amountToTake = amount - parentPlugin.getDbConnector().getOveflowAmount(player);
         }
 
@@ -57,12 +67,13 @@ public class TransactionManager {
         }
     }
 
+
     /**
      * Tries to store the players overflow amount as item in his chests.
      * @param player
      * @return Returns fault if there is not enough space in the chests.
      */
-    public Boolean storeOverflowToChest(String player) {
+    /*public Boolean storeOverflowToChest(String player) {
 
         float overflow = parentPlugin.getDbConnector().getOveflowAmount(player);
 
@@ -72,7 +83,7 @@ public class TransactionManager {
         }
 
         return !(parentPlugin.getDbConnector().getOveflowAmount(player) >= Float.parseFloat(parentPlugin.getFileConfig().getString("Economy-Settings.nuggetValue")));
-    }
+    }*/
 
     public void giveMoney(String player, float amount) {
         ArrayList<Location> chests = parentPlugin.getDbConnector().getPlayersChests(player);
@@ -91,14 +102,14 @@ public class TransactionManager {
         for (Location loc : chests) {
             amount = parentPlugin.getChestInteractor().depositGold(amount, ((Chest) loc.getBlock().getState())).getNotProcessed();
             if (amount == 0) {
-                return;
+                continue;
             }
         }
 
         //Store the new overflow amount...
         parentPlugin.getDbConnector().setOverflowAmount(player, amount);
-
     }
+
     public float getBalance(String player) {
 
         float balance = 0;

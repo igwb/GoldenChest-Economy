@@ -30,11 +30,15 @@ public final class ChestInteractor {
         chestBalance = parentPlugin.getGoldConverter().convertGoldToMoney(ChestChecker.getChestBalance(targetChest));
         targetBalance = chestBalance + amount;
 
-        parentPlugin.logMessage("adding " + amount + " to " + chestBalance + " target: " + targetBalance);
+        if (parentPlugin.getFileConfig().getBoolean("Debug")) {
+            parentPlugin.logMessage("adding " + amount + " to " + chestBalance + " target: " + targetBalance);
+        }
 
         amountNotDeposited = setGold(targetBalance, targetChest).getNotProcessed();
 
-        parentPlugin.logMessage("not deposited: " + amountNotDeposited);
+        if (parentPlugin.getFileConfig().getBoolean("Debug")) {
+            parentPlugin.logMessage("not deposited: " + amountNotDeposited);
+        }
 
         return new GoldTransactionResult(GoldTransactionResultType.SUCCESSFUL, amountNotDeposited);
     }
@@ -156,7 +160,15 @@ public final class ChestInteractor {
             amountNotTaken = 0f;
         }
 
+        if (parentPlugin.getFileConfig().getBoolean("Debug")) {
+            parentPlugin.logMessage("taking " + amount + " from " + chestBalance + " target: " + targetBalance);
+        }
+
         amountNotTaken += setGold(targetBalance, targetChest).getNotProcessed();
+
+        if (parentPlugin.getFileConfig().getBoolean("Debug")) {
+            parentPlugin.logMessage("not deposited: " + amountNotTaken);
+        }
 
         return new GoldTransactionResult(GoldTransactionResultType.SUCCESSFUL, amountNotTaken);
     }

@@ -147,9 +147,14 @@ public class DatabaseConnector {
 
             //Check if the player is in the database
             if (rs.next()) {
+                if (parentPlugin.getFileConfig().getBoolean("Debug")) {
+                    parentPlugin.logMessage("fetching overflow for " + player + " found " + rs.getFloat("OverflowAmount"));
+                }
                 return rs.getFloat("OverflowAmount");
             } else {
-
+                if (parentPlugin.getFileConfig().getBoolean("Debug")) {
+                    parentPlugin.logMessage("fetching overflow for " + player + " found " + rs.getFloat("OverflowAmount"));
+                }
                 return 0;
             }
 
@@ -189,7 +194,9 @@ public class DatabaseConnector {
 
             //Check if the player is in the database
             if (rs.next()) {
-
+                if (parentPlugin.getFileConfig().getBoolean("Debug")) {
+                    parentPlugin.logMessage("setting overflow for " + player + " setting " + amount);
+                }
                 st.executeUpdate("UPDATE Players set OverflowAmount = " + "\'" + amount + "\'" + "WHERE Name= \'" + player + "\';");
             } else {
 
@@ -223,6 +230,8 @@ public class DatabaseConnector {
         PreparedStatement pst = null;
         ResultSet rs = null;
 
+        boolean exists = false;
+
         try {
 
             //Convert name to lowercase.
@@ -235,12 +244,14 @@ public class DatabaseConnector {
 
             //Check if the chest is already in the database
             while (rs.next()) {
-
                 if (rs.getString(3).equals(chestLocation.getWorld().getName()) && rs.getInt(4) == chestLocation.getBlockX() && rs.getInt(5) == chestLocation.getBlockY() && rs.getInt(6) == chestLocation.getBlockZ()) {
-                    return DBAddResult.exists;
+                    exists = true;
                 }
             }
 
+            if (exists) {
+                return DBAddResult.exists;
+            }
 
             //Insert the chest data into the database here
             pst = con.prepareStatement("INSERT INTO Chests(Owner, World, X, Y, Z) Values (?,?,?,?,?);");
@@ -250,7 +261,6 @@ public class DatabaseConnector {
             pst.setInt(4, chestLocation.getBlockY());
             pst.setInt(5, chestLocation.getBlockZ());
             pst.execute();
-
 
             return DBAddResult.success;
 
@@ -270,6 +280,7 @@ public class DatabaseConnector {
                 }
             } catch (SQLException e) {
                 parentPlugin.logSevere(e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -374,7 +385,6 @@ public class DatabaseConnector {
 
     public ArrayList<String> getTopList() {
 
-
         ArrayList<String> result = new ArrayList<String>();
         ArrayList<String> players = new ArrayList<String>();
         ArrayList<Float> balances = new ArrayList<Float>();
@@ -459,7 +469,7 @@ public class DatabaseConnector {
                 parentPlugin.logSevere(e.getMessage());
                 e.printStackTrace();
             }
-        }  
+        }
     }
 
 }
