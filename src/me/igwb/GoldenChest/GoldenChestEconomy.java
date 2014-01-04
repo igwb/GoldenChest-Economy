@@ -64,6 +64,8 @@ public class GoldenChestEconomy extends JavaPlugin {
         } catch (IOException e) {
             logMessage("Could not submit stats to mcstats.org");
         }
+        
+        logMessage("Cleaning database! " + dbConnector.cleanDatabase() + " entries removed.");
 
     }
 

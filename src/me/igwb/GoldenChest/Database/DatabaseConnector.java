@@ -364,7 +364,7 @@ public class DatabaseConnector {
 
             st.executeUpdate("DELETE FROM Chests WHERE World=\'" + chestLocation.getWorld().getName() + "\' AND X=\'" + chestLocation.getBlockX() + "\' AND Y=\'" + chestLocation.getBlockY() + "\' AND Z=\'" + chestLocation.getBlockZ() + "\';");
 
-            return false;
+            return true;
 
         } catch (SQLException e) {
             parentPlugin.logSevere(e.getMessage());
@@ -381,6 +381,102 @@ public class DatabaseConnector {
                 parentPlugin.logSevere(e.getMessage());
             }
         }
+    }
+
+    /***
+     * Attempt to remove a player from the database. This will not remove his chests.
+     * @param name The name of the player.
+     * @return If removing the player was successful.
+     */
+    public Boolean removePlayer(String name) {
+        Connection con = null;
+        Statement st = null;
+
+
+        try {
+
+            con = getConnection();
+            st = con.createStatement();
+
+            //Convert name to lowercase.
+            name = name.toLowerCase();
+
+            st.executeUpdate("DELETE FROM Players WHERE Name=\'" + name + "';");
+
+            return true;
+
+        } catch (SQLException e) {
+            parentPlugin.logSevere(e.getMessage());
+            return false;
+        } finally {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                parentPlugin.logSevere(e.getMessage());
+            }
+        }
+    }
+
+    /***
+     * Will attempt to remove invalid entries and players without chests and overflow amount.
+     * @return The number of accounts removed.
+     */
+    public Integer cleanDatabase() {
+
+        Connection con = null;
+        Statement st = null;
+        ResultSet rs = null;
+
+        ArrayList<String> players = new ArrayList<String>();
+
+        try {
+            con = getConnection();
+            st = con.createStatement();
+            rs = st.executeQuery("SELECT Name, OverflowAmount FROM Players;");
+
+
+            while (rs.next()) {
+                if (rs.getFloat("OverflowAmount") == 0) {
+                    players.add(rs.getString("Name"));
+                }
+            }
+
+        } catch (SQLException e) {
+            parentPlugin.logSevere(e.getMessage());
+        } finally {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                parentPlugin.logSevere(e.getMessage());
+            }
+        }
+
+        Integer result = 0;
+
+        ArrayList<Location> chests;
+        for (String p : players) {
+            chests = getPlayersChests(p);
+
+            if (chests.size() == 0) {
+                result++;
+                removePlayer(p);
+            }
+        }
+
+        return result;
     }
 
     public ArrayList<String> getTopList() {
